@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/ai_response_model.dart';
 
-abstract class AiRemoteDataSource {
+abstract class AiRemoteDatsendMessage(String prompt)aSource {
   Future<AiResponseModel> askAi(String prompt);
 }
 
