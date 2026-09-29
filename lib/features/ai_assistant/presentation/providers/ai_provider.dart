@@ -16,7 +16,9 @@ final aiRepositoryImplProvider = Provider<AiRepositoryImpl>((ref) {
   return AiRepositoryImpl(remoteDataSource: dataSource);
 });
 
-final askHealthAssistantUsecaseProvider = Provider<AskHealthAssistantUsecase>((ref) {
+final askHealthAssistantUsecaseProvider = Provider<AskHealthAssistantUsecase>((
+  ref,
+) {
   final repo = ref.read(aiRepositoryImplProvider);
   return AskHealthAssistantUsecase(repositories: repo);
 });
@@ -41,11 +43,11 @@ class AiChatState {
   AiChatState({required this.messages, required this.isLoading});
 
   AiChatState copyWith({List<ChatMessage>? messages, bool? isLoading}) {
-      return AiChatState(
-        messages: messages ?? this.messages,
-        isLoading: isLoading ?? this.isLoading,
-      );
-    }
+    return AiChatState(
+      messages: messages ?? this.messages,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
 }
 
 class AiChatNotifier extends StateNotifier<AiChatState> {
@@ -57,28 +59,45 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
   Future<void> sendMessage(String prompt) async {
     if (prompt.trim().isEmpty) return;
 
-    //le message de l'utilisateur
     final userMessage = ChatMessage(
       text: prompt,
       isUser: true,
       timestamp: DateTime.now(),
     );
-    //stocké le message de l'utilisateur dans la liste de discussion
-    state = state.copyWith(messages:  [...state.messages, userMessage],isLoading:  true);
+    state = state.copyWith(
+      messages: [...state.messages, userMessage],
+      isLoading: true,
+    );
 
     try {
       //appel à l'IA via Rodium
       final suggestion = await useCase(prompt);
-      //reponse de l'IA
-      final aiMessage = ChatMessage(text: suggestion.responseText, isUser: false, timestamp: suggestion.timestamp);
-      state = state.copyWith(messages:  [...state.messages, aiMessage],isLoading:  false);
+      final aiMessage = ChatMessage(
+        text: suggestion.responseText,
+        isUser: false,
+        timestamp: suggestion.timestamp,
+      );
+      state = state.copyWith(
+        messages: [...state.messages, aiMessage],
+        isLoading: false,
+      );
     } catch (e) {
-      state = state.copyWith(isLoading: false);
+      final errorMessage = ChatMessage(
+        isUser: false,
+        text: e.toString(),
+        timestamp: DateTime.now(),
+      );
+      state = state.copyWith(
+        messages: [...state.messages, errorMessage],
+        isLoading: false,
+      );
     }
   }
 }
 
-final aiChatProvider = StateNotifierProvider<AiChatNotifier, AiChatState>((ref) {
+final aiChatProvider = StateNotifierProvider<AiChatNotifier, AiChatState>((
+  ref,
+) {
   final useCase = ref.read(askHealthAssistantUsecaseProvider);
   return AiChatNotifier(useCase);
 });
