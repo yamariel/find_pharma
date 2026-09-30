@@ -19,20 +19,21 @@ class AiRemoteDataSourceImpl implements AiRemoteDataSource {
 
     try {
       final response = await dio.post(
-        "https://api.rodiumai.io/v1/chat/completions",
+        "https://api.rodiumai.io/v1/messages",
         data: {
-          "model": "openai/gpt-4o",
+          "model": "anthropic/claude-sonnet-4-6",
           "messages": [
             {"role": "user", "content": prompt},
           ],
-          "max_tokens": 256,
+          "max_tokens": 1024,
         },
-        options: Options(headers: {"Authorization": "Bearer $apiKey"}),
+        options: Options(
+          headers: {"x-api-key": apiKey, "anthropic-version": "2023-06-01"},
+        ),
       );
 
       final String replyText =
-          response.data['choices']?[0]?['message']?['content'] ??
-          'Pas de réponse';
+          response.data['content']?[0]?['text'] ?? 'Mauvais chemin de réponse JSON';
 
       return AiResponseModel.fromJson({'message': replyText});
     } on DioException catch (e) {
