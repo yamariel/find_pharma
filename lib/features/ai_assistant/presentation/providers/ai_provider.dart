@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
+import '../../../../core/errors/failures.dart';
 import '../../../../core/network/dio_provider.dart';
 import '../../data/datasources/ai_remote_data_source.dart';
 import '../../data/repositories/ai_repository_impl.dart';
@@ -53,7 +54,18 @@ class AiChatState {
 class AiChatNotifier extends StateNotifier<AiChatState> {
   final AskHealthAssistantUsecase useCase;
   AiChatNotifier(this.useCase)
-    : super(AiChatState(messages: [], isLoading: false));
+    : super(
+        AiChatState(
+          messages: [
+            ChatMessage(
+              text: "Bonjour ! Je suis l'assistant FindPharma. Je peux vous aider à trouver une pharmacie de garde ouverte, vérifier les alternatives génériques d'un médicament ou vous orienter vers la structure de santé la plus proche. Comment puis-je vous aider aujourd'hui ?",
+              isUser: false,
+              timestamp: DateTime.now(),
+            ),
+          ],
+          isLoading: false,
+        ),
+      );
 
   //Envoyez un prompt à l'IA
   Future<void> sendMessage(String prompt) async {
@@ -84,7 +96,7 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
     } catch (e) {
       final errorMessage = ChatMessage(
         isUser: false,
-        text: e.toString(),
+        text: e is ServerFailure ? e.message : e.toString(),
         timestamp: DateTime.now(),
       );
       state = state.copyWith(
