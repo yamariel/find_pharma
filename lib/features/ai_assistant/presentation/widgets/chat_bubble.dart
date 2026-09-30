@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../../core/utils/date_formatter.dart';
 
@@ -57,13 +58,15 @@ class ChatBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: isUser
-                        ? colorScheme.onPrimary
-                        : colorScheme.onSurface,
-                    fontSize: 15,
+                MarkdownBody(
+                  data: text,
+                  styleSheet: MarkdownStyleSheet(
+                    p: TextStyle(
+                      color: isUser
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurface,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
