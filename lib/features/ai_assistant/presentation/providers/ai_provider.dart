@@ -105,6 +105,14 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
       );
     }
   }
+
+  void deleteMessage(int index) {
+    if (index >= 0 && index < state.messages.length) {
+      final updatedMessages = List<ChatMessage>.from(state.messages)
+        ..removeAt(index);
+      state = state.copyWith(messages: updatedMessages);
+    }
+  }
 }
 
 final aiChatProvider = StateNotifierProvider<AiChatNotifier, AiChatState>((
