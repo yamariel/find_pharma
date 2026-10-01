@@ -40,12 +40,54 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     }
   }
 
+  Future<void> _showDialog(int messageIndex) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Voulez-vous supprimer ce message?'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'Cette action est irréversible et le message disparaîtra de la liste de discussion.',
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Supprimer',
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () {
+                ref.read(aiChatProvider.notifier).deleteMessage(messageIndex);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final aiChat = ref.watch(aiChatProvider);
     final colorScheme = Theme.of(context).colorScheme;
     ref.listen(aiChatProvider, (previous, next) {
-      Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+      if (previous?.messages.length != next.messages.length ||
+          (previous?.isLoading == true && next.isLoading == false)) {
+        Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+      }
     });
 
     return Scaffold(
@@ -87,10 +129,16 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                     );
                   }
                   final message = aiChat.messages[i];
-                  return ChatBubble(
-                    isUser: message.isUser,
-                    text: message.text,
-                    time: message.timestamp,
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ChatBubble(
+                      onLongPress: message.isUser == true
+                          ? () => _showDialog(i)
+                          : null,
+                      isUser: message.isUser,
+                      text: message.text,
+                      time: message.timestamp,
+                    ),
                   );
                 },
               ),
