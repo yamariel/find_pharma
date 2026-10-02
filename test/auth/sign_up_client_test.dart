@@ -20,14 +20,12 @@ void main() {
     final user = UserEntity(
       uid: '123',
       nom: 'Doe',
-      prenom: 'John',
       email: 'john@example.com',
       role: 'client',
     );
 
     when(() => repo.registerClientUsecase(
       nom: any(named: 'nom'),
-      prenom: any(named: 'prenom'),
       email: any(named: 'email'),
       password: any(named: 'password'),
       phone: any(named: 'phone'),
@@ -36,7 +34,6 @@ void main() {
 
     final result = await usecase(
       nom: 'Doe',
-      prenom: 'John',
       email: 'john@example.com',
       password: '123456',
     );

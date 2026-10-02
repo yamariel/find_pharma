@@ -19,7 +19,6 @@ void main() {
     final user = UserEntity(
       uid: '123',
       nom: 'Doe',
-      prenom: 'John',
       email: 'john@example.com',
       role: 'client',
     );
