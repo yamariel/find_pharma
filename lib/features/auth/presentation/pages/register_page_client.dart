@@ -1,27 +1,33 @@
-import 'package:find_pharma/features/auth/presentation/pages/register_page_client.dart';
+import 'package:find_pharma/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_controller.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class RegisterPageClient extends ConsumerStatefulWidget {
+  const RegisterPageClient({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<RegisterPageClient> createState() => _RegisterPageClientState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
   final _formKey = GlobalKey<FormState>();
 
+  final nameCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
+  final confirmCtrl = TextEditingController();
 
   bool showPassword = false;
+  bool showConfirmPassword = false;
+
   @override
   void dispose() {
+    nameCtrl.dispose();
     emailCtrl.dispose();
     passCtrl.dispose();
+    confirmCtrl.dispose();
     super.dispose();
   }
 
@@ -35,10 +41,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         error: (error, stackTrace) {
           if (!context.mounted) return;
 
-          debugPrint('Connexion impossible : $error');
+          debugPrint('Inscription impossible : $error');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Connexion impossible!!'),
+              content: Text('Inscription impossible!!'),
               backgroundColor: Colors.red,
             ),
           );
@@ -47,66 +53,60 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
 
-                Center(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 80,
-                        width: 80,
-                        child: Image.asset(
-                          'assets/images/find_pharma_icon.png',
-                        ),
+                // LOGO + TITRE
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: Image.asset('assets/images/find_pharma_icon.png'),
+                    ),
+                    const Text(
+                      "FindPharma",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const Text(
-                        "FindPharma",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        "Trouvez vos médicaments et pharmacies",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      "Créer un compte",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      "Rejoignez FindPharma pour enregistrer vos pharmacies et médicaments favoris.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 40),
 
+                // GOOGLE BUTTON
                 OutlinedButton.icon(
                   onPressed: isLoading
                       ? null
                       : () {
                     ref
                         .read(authControllerProvider.notifier)
-                        .signInWithGoogle();
+                        .signUpWithGoogle();
                   },
-                  icon: Image.asset(
-                    'assets/images/google.png',
-                    height: 22,
-                  ),
-                  label: const Text(
-                    'Se connecter avec Google',
-                  ),
+                  icon: Image.asset('assets/images/google.png', height: 22),
+                  label: const Text("S’inscrire avec Google"),
                   style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(
-                      double.infinity,
-                      50,
-                    ),
-                    side: const BorderSide(
-                      color: Colors.grey,
-                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                    side: const BorderSide(color: Colors.grey),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -114,15 +114,37 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
 
                 const SizedBox(height: 20),
-                const Center(child: Text("ou avec un e-mail")),
+                const Text("ou avec une adresse e-mail"),
                 const SizedBox(height: 20),
+
+                // NOM COMPLET
+                TextFormField(
+                  controller: nameCtrl,
+                  decoration: InputDecoration(
+                    labelText: "Nom complet",
+                    hintText: "ex. Marc Dubois",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Veuillez entrer votre nom complet";
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 16),
 
                 // EMAIL
                 TextFormField(
                   controller: emailCtrl,
                   decoration: InputDecoration(
                     labelText: "Adresse e-mail",
-                    hintText: "patient@exemple.com",
+                    hintText: "nom@exemple.com",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -149,7 +171,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   obscureText: !showPassword,
                   decoration: InputDecoration(
                     labelText: "Mot de passe",
-                    hintText: "••••••••",
+                    hintText: "8 caractères minimum",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -170,32 +192,66 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Veuillez entrer votre mot de passe";
+                      return "Veuillez entrer un mot de passe";
                     }
-                    if (value.length < 6) {
-                      return "6 caractères minimum";
+                    if (value.length < 8) {
+                      return "8 caractères minimum";
                     }
                     return null;
                   },
                 ),
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text("Mot de passe oublié ?"),
+                const SizedBox(height: 16),
+
+                // CONFIRMATION MOT DE PASSE
+                TextFormField(
+                  controller: confirmCtrl,
+                  obscureText: !showConfirmPassword,
+                  decoration: InputDecoration(
+                    labelText: "Confirmer le mot de passe",
+                    hintText: "Répétez le mot de passe",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        showConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          showConfirmPassword = !showConfirmPassword;
+                        });
+                      },
+                    ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Veuillez confirmer votre mot de passe";
+                    }
+                    if (value != passCtrl.text) {
+                      return "Les mots de passe ne correspondent pas";
+                    }
+                    return null;
+                  },
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
+                // BOUTON INSCRIPTION
 
                 ElevatedButton(
                   onPressed: isLoading
                       ? null
                       : () {
                     if (_formKey.currentState!.validate()) {
-                      ref.read(authControllerProvider.notifier).signIn(
+                      ref
+                          .read(authControllerProvider.notifier)
+                          .signUpClient(
+                        nameCtrl.text.trim(),
                         emailCtrl.text.trim(),
                         passCtrl.text,
                       );
@@ -213,7 +269,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     width: 22,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                      : const Text('Se connecter'),
+                      : const Text('Créer mon compte'),
                 ),
 
                 const SizedBox(height: 20),
@@ -222,55 +278,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Pas encore de compte ?',
+                      'Vous avez déjà un compte ?',
                       style: TextStyle(color: Colors.grey.shade700),
                     ),
                     TextButton(
                       onPressed: () {
-                        context.go('/signup/client');
+                        context.go('/login');
                       },
                       child: const Text(
-                        'S’inscrire',
+                        'Se connecter',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 10),
-
-                // 🔥 BOUTON VISITEUR
-                OutlinedButton(
-                  onPressed: () {
-                    context.go('/visitor');
-                  },
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    side: const BorderSide(color: Colors.green),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Continuer en tant que visiteur",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-
-
-                const Spacer(),
-
-                const Center(
-                  child: Text(
-                    "En continuant, vous acceptez les Conditions et la Confidentialité.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ),
-
                 const SizedBox(height: 20),
               ],
             ),
