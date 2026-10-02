@@ -14,10 +14,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
 
 
-  @override
-  Future<UserEntity> registerPharmacieUsecase(String name, String email, String password) {
-    return remote.signUpPharmacy(name, email, password);
-  }
+  // Future<UserEntity> registerPharmacieUsecase(String name, String email, String password) {
+  //   return remote.signUpPharmacy(name, email, password);
+  // }
 
   @override
   Future<void> logoutUsecase() {
