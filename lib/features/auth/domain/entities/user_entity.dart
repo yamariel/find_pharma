@@ -1,43 +1,19 @@
-
 class UserEntity {
-  final String uid;            // id Firebase
+  final String uid;
   final String nom;
-  final String prenom;
   final String email;
-  final String role;           // "client", "pharmacy", "admin"
-  final String? phone;         // optionnel
-  final String? adresse;       // optionnel
+  final String role;
+  final String? phone;
+  final String? adresse;
+  final String? token;
 
-  UserEntity({
+  const UserEntity({
     required this.uid,
     required this.nom,
-    required this.prenom,
     required this.email,
     required this.role,
     this.phone,
     this.adresse,
+    this.token,
   });
-
-  factory UserEntity.fromMap(Map<String, dynamic> data, String uid) {
-    return UserEntity(
-      uid: uid,
-      nom: data['nom'] ?? '',
-      prenom: data['prenom'] ?? '',
-      email: data['email'] ?? '',
-      role: data['role'] ?? 'client',
-      phone: data['phone'],
-      adresse: data['adresse'],
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'nom': nom,
-      'prenom': prenom,
-      'email': email,
-      'role': role,
-      'phone': phone,
-      'adresse': adresse,
-    };
-  }
 }

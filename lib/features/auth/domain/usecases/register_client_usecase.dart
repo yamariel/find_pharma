@@ -10,7 +10,6 @@ class RegisterClientUsecase {
 
   Future<UserEntity> call({
     required String nom,
-    required String prenom,
     required String email,
     required String password,
     String? phone,
@@ -18,7 +17,6 @@ class RegisterClientUsecase {
   }) {
     return repository.registerClientUsecase(
       nom: nom,
-      prenom: prenom,
       email: email,
       password: password,
       phone: phone,

@@ -12,7 +12,6 @@ abstract class AuthRepository {
 
   Future<UserEntity> registerClientUsecase({
     required String nom,
-    required String prenom,
     required String email,
     required String password,
     String? phone,
@@ -30,4 +29,9 @@ abstract class AuthRepository {
   // });
 
   Future<void> logoutUsecase();
+
+  Future<UserEntity?> signInWithGoogle();
+
+  Future<UserEntity?> signUpWithGoogle();
+
 }
