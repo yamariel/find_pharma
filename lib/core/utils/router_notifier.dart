@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +15,11 @@ class RouterNotifier extends ChangeNotifier {
 }
 
 final routerNotifierProvider = Provider<RouterNotifier>((ref) {
-  return RouterNotifier(ref);
+  final notifier = RouterNotifier(ref);
+
+  ref.onDispose(notifier.dispose);
+
+  return notifier;
 });
 
 final firstLaunchProvider = Provider<bool>((ref) {

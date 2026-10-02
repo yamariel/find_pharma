@@ -1,143 +1,132 @@
-import 'package:find_pharma/features/auth/domain/entities/user_entity.dart';
-import 'package:find_pharma/features/auth/presentation/pages/register_page_client.dart';
-import 'package:find_pharma/features/auth/presentation/pages/register_page_pharmacie.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/providers/auth_provider.dart' as Injector;
+import '../../features/auth/presentation/pages/visitor_page.dart';
+import '../../features/auth/presentation/pages/register_page_client.dart';
+import '../../features/auth/presentation/pages/register_page_pharmacie.dart';
 import '../../features/auth/presentation/providers/auth_state_provider.dart';
 import '../../features/pharmacies/presentation/pages/pharmacies_page.dart';
 import '../../features/medicines/presentation/pages/search_medicines_page.dart';
 import '../../features/ai_assistant/presentation/pages/ai_chat_page.dart';
 import '../../features/map/presentation/pages/map_page.dart';
+import '../../features/auth/presentation/pages/client_home_page.dart';
 import 'router_notifier.dart';
 
-
-
 final goRouterProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-      initialLocation: '/loading',
+  final router = GoRouter(
+    initialLocation: '/loading',
+    refreshListenable: ref.watch(routerNotifierProvider),
 
-      refreshListenable: ref.watch(routerNotifierProvider),
+    redirect: (context, state) {
+      final authState = ref.read(authStateProvider);
+      final user = authState.value;
+      final location = state.matchedLocation;
 
-      redirect: (context, state) {
-        final user = ref.read(authStateProvider).value;
-        final isFirstLaunch = ref.read(firstLaunchProvider);
+      final isLoading = authState.isLoading;
+      final isLogin = location == '/login';
+      final isVisitor = location == '/visitor';
 
-        final location = state.matchedLocation;
+      final isSignup =
+          location == '/signup/client' ||
+              location == '/signup/pharmacy';
 
-        final isAuthPage =
-            location == '/login' ||
-                location == '/signup-client' ||
-                location == '/signup-pharmacy';
+      // Attendre la résolution de l'authentification Firebase.
+      if (isLoading) {
+        return location == '/loading' ? null : '/loading';
+      }
 
-        final isVisitorPage = location == '/visitor';
+      // Pages accessibles sans compte.
+      const publicRoutes = {
+        '/visitor',
+        '/login',
+        '/signup/client',
+        '/signup/pharmacy',
+        '/search-medicines',
+        '/pharmacies',
+        '/map',
+        '/ai-chat',
+      };
 
-        // ============================================================
-        // 1. PREMIÈRE OUVERTURE DE L'APPLICATION
-        // ============================================================
-
-        if (isFirstLaunch && user == null) {
-          if (location == '/login') {
-            return null;
-          }
-
+      // Utilisateur non connecté.
+      if (user == null) {
+        if (location == '/loading') {
           return '/login';
         }
 
-        // ============================================================
-        // 2. UTILISATEUR NON CONNECTÉ - OUVERTURES SUIVANTES
-        // ============================================================
-
-        if (user == null) {
-          // L'utilisateur peut accéder librement à :
-          // - visitor
-          // - login
-          // - signup client
-          // - signup pharmacie
-
-          if (isVisitorPage || isAuthPage) {
-            return null;
-          }
-
-          return '/visitor';
+        if (publicRoutes.contains(location)) {
+          return null;
         }
 
-        // ============================================================
-        // 3. UTILISATEUR CONNECTÉ
-        // ============================================================
+        return '/visitor';
+      }
 
-        // Un utilisateur connecté ne doit plus voir
-        // login / signup / visitor.
-        if (isAuthPage || isVisitorPage) {
-          switch (user.role) {
-            case 'client':
-              return '/search-medicines';
-
-            case 'pharmacy':
-              return '/pharmacies';
-
-            case 'admin':
-              return '/map';
-
-            default:
-              return '/search-medicines';
-          }
+      // Utilisateur connecté : empêcher le retour vers
+      // les pages d'authentification ou le mode visiteur.
+      if (isLogin || isSignup || isVisitor || location == '/loading') {
+        switch (user.role) {
+          case 'client':
+            return '/client';
+          case 'pharmacy':
+            return '/pharmacies';
+          case 'admin':
+            return '/map';
+          default:
+            return '/client';
         }
+      }
 
-        return null;
-      },
+      return null;
+    },
+
     routes: [
       GoRoute(
         path: '/loading',
-        builder: (_, __) => const SizedBox.shrink(),
+        builder: (_, __) => const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
       ),
-      // GoRoute(
-      //   path: '/visitor',
-      //   builder: (context, state) => const VisitorHomePage(),
-      // ),
+      GoRoute(
+        path: '/visitor',
+        builder: (_, __) => VisitorHomePage(),
+      ),
       GoRoute(
         path: '/login',
-        builder: (context, state) =>
-            LoginPage(),
+        builder: (_, __) => const LoginPage(),
       ),
       GoRoute(
-        path: '/signup-client',
-        builder: (context, state) =>
-            RegisterPageClient(),
-      ),
-      GoRoute(
-        path: '/signup-pharmacy',
-        builder: (context, state) =>
-            PharmaciesPage(),
+        path: '/signup/client',
+        builder: (_, __) => const RegisterPageClient(),
       ),
       // GoRoute(
-      //   path: '/client',
-      //   builder: (context, state) => const ClientHomePage(),
+      //   path: '/signup/pharmacy',
+      //   builder: (_, __) => RegisterPagePharmacie(),
       // ),
+      GoRoute(
+        path: '/client',
+        builder: (_, __) => const ClientHomePage(),
+      ),
       GoRoute(
         path: '/pharmacies',
-        builder: (context, state) => const PharmaciesPage(),
-      ),
-      // GoRoute(
-      //   path: '/admin',
-      //   builder: (context, state) => const AdminHomePage(),
-      // ),
-      GoRoute(
-          path: '/map',
-          builder: (context, state) => const MapPage()
+        builder: (_, __) => const PharmaciesPage(),
       ),
       GoRoute(
-          path: '/search-medicines',
-          builder: (context, state) => const SearchMedicinesPage()
+        path: '/map',
+        builder: (_, __) => const MapPage(),
       ),
       GoRoute(
-          path: '/ai-chat',
-          builder: (context, state) => const AiChatPage()
+        path: '/search-medicines',
+        builder: (_, __) => const SearchMedicinesPage(),
+      ),
+      GoRoute(
+        path: '/ai-chat',
+        builder: (_, __) => const AiChatPage(),
       ),
     ],
   );
+
+  ref.onDispose(router.dispose);
+  return router;
 });
