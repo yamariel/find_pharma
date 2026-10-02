@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/visitor_page.dart';
 import '../../features/auth/presentation/pages/register_page_client.dart';
-import '../../features/auth/presentation/pages/register_page_pharmacie.dart';
 import '../../features/auth/presentation/providers/auth_state_provider.dart';
 import '../../features/pharmacies/presentation/pages/pharmacies_page.dart';
 import '../../features/medicines/presentation/pages/search_medicines_page.dart';
@@ -84,45 +83,45 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/loading',
-        builder: (_, __) => const Scaffold(
+        builder: (context, state) => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
       ),
       GoRoute(
         path: '/visitor',
-        builder: (_, __) => VisitorHomePage(),
+        builder: (context, state) => VisitorHomePage(),
       ),
       GoRoute(
         path: '/login',
-        builder: (_, __) => const LoginPage(),
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: '/signup/client',
-        builder: (_, __) => const RegisterPageClient(),
+        builder: (context, state) => const RegisterPageClient(),
       ),
       // GoRoute(
       //   path: '/signup/pharmacy',
-      //   builder: (_, __) => RegisterPagePharmacie(),
+      //   builder: (context, state) => RegisterPagePharmacie(),
       // ),
       GoRoute(
         path: '/client',
-        builder: (_, __) => const ClientHomePage(),
+        builder: (context, state) => const ClientHomePage(),
       ),
       GoRoute(
         path: '/pharmacies',
-        builder: (_, __) => const PharmaciesPage(),
+        builder: (context, state) => const PharmaciesPage(),
       ),
       GoRoute(
         path: '/map',
-        builder: (_, __) => const MapPage(),
+        builder: (context, state) => const MapPage(),
       ),
       GoRoute(
         path: '/search-medicines',
-        builder: (_, __) => const SearchMedicinesPage(),
+        builder: (context, state) => const SearchMedicinesPage(),
       ),
       GoRoute(
         path: '/ai-chat',
-        builder: (_, __) => const AiChatPage(),
+        builder: (context, state) => const AiChatPage(),
       ),
     ],
   );

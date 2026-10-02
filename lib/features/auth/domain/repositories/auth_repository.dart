@@ -1,6 +1,5 @@
 import 'package:find_pharma/features/auth/domain/entities/user_entity.dart';
 
-import '../../../pharmacies/domain/entities/pharmacy.dart';
 
 abstract class AuthRepository {
   Stream<UserEntity?> authStateChanges();

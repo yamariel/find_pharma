@@ -6,7 +6,7 @@ import '../../features/auth/presentation/providers/auth_state_provider.dart';
 
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this.ref) {
-    ref.listen(authStateProvider, (_, __) {
+    ref.listen(authStateProvider, (context, state) {
       notifyListeners();
     });
   }
