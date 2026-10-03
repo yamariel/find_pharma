@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 class ProfileSecurityPage extends ConsumerWidget {
   const ProfileSecurityPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = FirebaseAuth.instance;
+    final auth = ref.watch(firebaseAuthProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Sécurité du compte")),
