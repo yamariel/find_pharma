@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "324086752278",
+    "project_id": "find-pharma-f9151",
+    "storage_bucket": "find-pharma-f9151.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324086752278:android:2226501b71aeb8c7e14137",
+        "android_client_info": {
+          "package_name": "com.findpharma_g9.org.find_pharma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmZFu6AIIUOQMYkJSBFa7OkftmLeAG1pM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
