@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:find_pharma/features/auth/domain/entities/user_entity.dart';
+import 'package:find_pharma/features/Client/domain/entities/user_entity.dart';
 import 'auth_provider.dart';
 
 final authStateProvider = StreamProvider<UserEntity?>((ref) async* {
