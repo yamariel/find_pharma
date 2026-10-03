@@ -1,14 +1,23 @@
-class AdminEntity {
-  final String id;
-  final String nom;
-  final String email;
+import '../../domain/entities/admin_entity.dart';
 
-  AdminEntity({
-    required this.id,
-    required this.nom,
-    required this.email,
+class AdminModel extends AdminEntity {
+  const AdminModel({
+    required super.id,
+    required super.nom,
+    required super.email,
   });
 
+  /// Firestore → AdminModel
+  factory AdminModel.fromMap(String id, Map<String, dynamic> data) {
+    return AdminModel(
+      id: id,
+      nom: data['nom'] as String? ?? '',
+      email: data['email'] as String? ?? '',
+    );
+  }
+
+  /// AdminModel → Firestore
+  @override
   Map<String, dynamic> toMap() {
     return {
       'nom': nom,
@@ -16,11 +25,21 @@ class AdminEntity {
     };
   }
 
-  factory AdminEntity.fromMap(String id, Map<String, dynamic> map) {
+  /// AdminEntity → AdminModel
+  factory AdminModel.fromEntity(AdminEntity entity) {
+    return AdminModel(
+      id: entity.id,
+      nom: entity.nom,
+      email: entity.email,
+    );
+  }
+
+  /// AdminModel → AdminEntity
+  AdminEntity toEntity() {
     return AdminEntity(
       id: id,
-      nom: map['nom'] ?? '',
-      email: map['email'] ?? '',
+      nom: nom,
+      email: email,
     );
   }
 }
