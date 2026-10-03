@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,8 +31,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isVisitor = location == '/visitor';
 
       final isSignup =
-          location == '/signup/client' ||
-              location == '/signup/pharmacy';
+          location == '/signup/client' || location == '/signup/pharmacy';
 
       // Attendre la résolution de l'authentification Firebase.
       if (isLoading) {
@@ -86,18 +84,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/loading',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
-      GoRoute(
-        path: '/visitor',
-        builder: (context, state) => VisitorHomePage(),
-      ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: '/visitor', builder: (context, state) => VisitorHomePage()),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/signup/client',
         builder: (context, state) => const RegisterPageClient(),
@@ -123,13 +114,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/pharmacies',
         builder: (context, state) => const PharmaciesPage(),
       ),
-      GoRoute(
-        path: '/map',
-        builder: (context, state) => const MapPage(),
-      ),
+      GoRoute(path: '/map', builder: (context, state) => const MapPage()),
       GoRoute(
         path: '/search-medicines',
-        builder: (context, state) => const SearchMedicinesPage(),
+        builder: (context, state) => SearchMedicinesPage(
+          initialQuery: state.uri.queryParameters['query'] ?? '',
+        ),
       ),
       GoRoute(
         path: '/ai-chat',

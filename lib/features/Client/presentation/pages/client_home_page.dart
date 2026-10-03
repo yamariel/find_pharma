@@ -4,11 +4,32 @@ import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/providers/auth_controller.dart';
 
-class ClientHomePage extends ConsumerWidget {
+class ClientHomePage extends ConsumerStatefulWidget {
   const ClientHomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ClientHomePage> createState() => _ClientHomePageState();
+}
+
+class _ClientHomePageState extends ConsumerState<ClientHomePage> {
+  final _medicineController = TextEditingController();
+
+  @override
+  void dispose() {
+    _medicineController.dispose();
+    super.dispose();
+  }
+
+  void _openMedicineSearch(BuildContext context) {
+    final uri = Uri(
+      path: '/search-medicines',
+      queryParameters: {'query': _medicineController.text.trim()},
+    );
+    context.push(uri.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("FindPharma - Client"),
@@ -18,7 +39,7 @@ class ClientHomePage extends ConsumerWidget {
             onPressed: () {
               ref.read(authControllerProvider.notifier).signOut();
             },
-          )
+          ),
         ],
       ),
 
@@ -34,6 +55,9 @@ class ClientHomePage extends ConsumerWidget {
             const SizedBox(height: 20),
 
             TextField(
+              controller: _medicineController,
+              textInputAction: TextInputAction.search,
+              onSubmitted: (_) => _openMedicineSearch(context),
               decoration: InputDecoration(
                 hintText: "Nom du médicament...",
                 prefixIcon: const Icon(Icons.search),
@@ -48,7 +72,7 @@ class ClientHomePage extends ConsumerWidget {
             const SizedBox(height: 20),
 
             ElevatedButton(
-              onPressed: () => context.push('/search-medicines'),
+              onPressed: () => _openMedicineSearch(context),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
