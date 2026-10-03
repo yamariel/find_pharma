@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/Client/presentation/pages/profile_edit_page.dart';
+import '../../features/Client/presentation/pages/profile_page.dart';
+import '../../features/Client/presentation/pages/profile_security_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/visitor_page.dart';
 import '../../features/auth/presentation/pages/register_page_client.dart';
@@ -11,7 +14,7 @@ import '../../features/pharmacies/presentation/pages/pharmacies_page.dart';
 import '../../features/medicines/presentation/pages/search_medicines_page.dart';
 import '../../features/ai_assistant/presentation/pages/ai_chat_page.dart';
 import '../../features/map/presentation/pages/map_page.dart';
-import '../../features/auth/presentation/pages/client_home_page.dart';
+import '../../features/Client/presentation/pages/client_home_page.dart';
 import 'router_notifier.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -99,10 +102,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/signup/client',
         builder: (context, state) => const RegisterPageClient(),
       ),
-      // GoRoute(
-      //   path: '/signup/pharmacy',
-      //   builder: (context, state) => RegisterPagePharmacie(),
-      // ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        builder: (context, state) => const ProfileEditPage(),
+      ),
+      GoRoute(
+        path: '/profile/security',
+        builder: (context, state) => const ProfileSecurityPage(),
+      ),
+
       GoRoute(
         path: '/client',
         builder: (context, state) => const ClientHomePage(),

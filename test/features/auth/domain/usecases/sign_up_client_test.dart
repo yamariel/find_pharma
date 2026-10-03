@@ -1,4 +1,4 @@
-import 'package:find_pharma/features/auth/domain/entities/user_entity.dart';
+import 'package:find_pharma/features/Client/domain/entities/user_entity.dart';
 import 'package:find_pharma/features/auth/domain/repositories/auth_repository.dart';
 import 'package:find_pharma/features/auth/domain/usecases/register_client_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';

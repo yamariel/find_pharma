@@ -1,4 +1,4 @@
-import 'package:find_pharma/features/auth/domain/entities/user_entity.dart';
+import 'package:find_pharma/features/Client/domain/entities/user_entity.dart';
 
 import '../repositories/auth_repository.dart';
 
