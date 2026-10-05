@@ -37,6 +37,20 @@ class AiRemoteDataSourceImpl implements AiRemoteDataSource {
 
       return AiResponseModel.fromJson({'message': replyText});
     } on DioException catch (e) {
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          throw ServerException(
+            "Le serveur met trop de temps à répondre. Vérifiez votre connexion et réessayez.",
+          );
+        case DioExceptionType.connectionError:
+          throw ServerException(
+            "Impossible de se connecter. Vérifiez votre accès Internet.",
+          );
+        default:
+          break;
+      }
       switch (e.response?.statusCode) {
         case 401:
           throw ServerException(
