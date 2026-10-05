@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/dio_provider.dart';
+import '../../../pharmacies/data/datasources/pharmacy_local_mock_datasource.dart';
 import '../../data/datasources/ai_remote_data_source.dart';
 import '../../data/repositories/ai_repository_impl.dart';
 import '../../domain/usecases/ask_health_assistant_usecase.dart';
@@ -24,20 +25,26 @@ final askHealthAssistantUsecaseProvider = Provider<AskHealthAssistantUsecase>((
   return AskHealthAssistantUsecase(repositories: repo);
 });
 
-// Réprésente un message
+final _mockDatasource = Provider<PharmacyLocalMockDatasource>((ref) {
+  return PharmacyLocalMockDatasource();
+});
+
+// Représente un message
 class ChatMessage {
   final String text;
   final bool isUser;
+  final bool isDelete;
   final DateTime timestamp;
 
   ChatMessage({
     required this.text,
     required this.isUser,
     required this.timestamp,
+    this.isDelete = false,
   });
 }
 
-// Répresente l'état de l'IA
+// Représente l'état de l'IA
 class AiChatState {
   final List<ChatMessage> messages;
   final bool isLoading;
@@ -53,7 +60,9 @@ class AiChatState {
 
 class AiChatNotifier extends StateNotifier<AiChatState> {
   final AskHealthAssistantUsecase useCase;
-  AiChatNotifier(this.useCase)
+  final PharmacyLocalMockDatasource pharmacyDatasource;
+
+  AiChatNotifier(this.useCase, this.pharmacyDatasource)
     : super(
         AiChatState(
           messages: [
@@ -67,28 +76,46 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
         ),
       );
 
-  //Envoyez un prompt à l'IA
+  // Envoyer un prompt à l'IA avec le contexte des pharmacies
   Future<void> sendMessage(String prompt) async {
     if (prompt.trim().isEmpty) return;
 
+    // on crée le message utilisateur visible dans l'UI
     final userMessage = ChatMessage(
       text: prompt,
       isUser: true,
       timestamp: DateTime.now(),
     );
+    
     state = state.copyWith(
       messages: [...state.messages, userMessage],
       isLoading: true,
     );
 
     try {
-      //appel à l'IA via Rodium
-      final suggestion = await useCase(prompt);
+      // on récupère les pharmacies via le mock injecté
+      final pharmacies = await pharmacyDatasource.getPharmacies();
+      final pharmaciesContext = pharmacies.map(
+        (p) => "- Nom : ${p.name} | Quartier : ${p.district} | Adresse : ${p.address ?? 'Non spécifiée'} | Téléphone : ${p.phone}",
+      ).join('\n');
+
+      // on construit le prompt enrichi avec les vraies données textuelles pour l'IA
+      final enrichedPrompt = """
+Voici la liste des pharmacies actuellement enregistrées dans le système :
+$pharmaciesContext
+
+Question de l'utilisateur : $prompt
+""";
+
+      // appel à l'IA avec le prompt enrichi
+      final suggestion = await useCase(enrichedPrompt);
+      
       final aiMessage = ChatMessage(
         text: suggestion.responseText,
         isUser: false,
         timestamp: suggestion.timestamp,
       );
+      
       state = state.copyWith(
         messages: [...state.messages, aiMessage],
         isLoading: false,
@@ -119,5 +146,6 @@ final aiChatProvider = StateNotifierProvider<AiChatNotifier, AiChatState>((
   ref,
 ) {
   final useCase = ref.read(askHealthAssistantUsecaseProvider);
-  return AiChatNotifier(useCase);
+  final mockDatasource = ref.read(_mockDatasource);
+  return AiChatNotifier(useCase, mockDatasource);
 });
