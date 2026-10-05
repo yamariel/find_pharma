@@ -65,7 +65,7 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: Colors.grey.shade100,
+                fillColor: Colors.transparent,
               ),
             ),
 

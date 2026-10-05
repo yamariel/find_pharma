@@ -30,10 +30,12 @@ class UserRemoteDataSource {
   Future<void> updateClient(UserEntity client) async {
     await firestore.collection('users').doc(client.uid).update({
       'nom': client.nom,
-      'email': client.email,
       'phone': client.phone,
       'adresse': client.adresse,
     });
+
+    await auth.currentUser!.updateDisplayName(client.nom);
+
   }
 
   // DELETE CLIENT

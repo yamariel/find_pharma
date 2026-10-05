@@ -126,7 +126,7 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Colors.transparent,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -148,7 +148,7 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Colors.transparent,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -175,7 +175,7 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Colors.transparent,
                     suffixIcon: IconButton(
                       icon: Icon(
                         showPassword
@@ -213,7 +213,7 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Colors.transparent,
                     suffixIcon: IconButton(
                       icon: Icon(
                         showConfirmPassword

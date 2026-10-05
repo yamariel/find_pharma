@@ -1,3 +1,5 @@
+
+import 'package:find_pharma/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/Client/presentation/pages/profile_edit_page.dart';
 import '../../features/Client/presentation/pages/profile_page.dart';
 import '../../features/Client/presentation/pages/profile_security_page.dart';
+import '../../features/admin/presentation/pages/create_admin_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/visitor_page.dart';
 import '../../features/auth/presentation/pages/register_page_client.dart';
@@ -72,7 +75,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           case 'pharmacy':
             return '/pharmacies';
           case 'admin':
-            return '/map';
+            return '/admin';
           default:
             return '/client';
         }
@@ -84,11 +87,27 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/loading',
-        builder: (context, state) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        builder: (context, state) => const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
       ),
-      GoRoute(path: '/visitor', builder: (context, state) => VisitorHomePage()),
-      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/visitor',
+        builder: (context, state) => VisitorHomePage(),
+      ),
+      GoRoute(
+        path: '/admin',
+        builder: (context, state) => AdminHomePage(),
+      ),
+      GoRoute(
+        path: '/admin/create',
+        builder: (context, state) => const CreateAdminPage(),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginPage(),
+      ),
+      
       GoRoute(
         path: '/signup/client',
         builder: (context, state) => const RegisterPageClient(),

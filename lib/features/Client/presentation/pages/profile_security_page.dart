@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/providers/auth_provider.dart';
 
@@ -37,9 +38,22 @@ class ProfileSecurityPage extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Email envoyé à $email")),
                   );
+
+                  // 🔥 Retour automatique vers la page précédente (ProfilePage)
+                  context.pop();
                 }
               },
               child: const Text("Envoyer le lien"),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Bouton Annuler / Retour
+            OutlinedButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: const Text("Annuler"),
             ),
           ],
         ),

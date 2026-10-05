@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/providers/auth_state_provider.dart';
 import '../../domain/entities/user_entity.dart';
 import '../providers/client_controller.dart';
@@ -34,7 +35,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text("Erreur : $e")),
         data: (user) {
-          if (user == null) return const Center(child: Text("Utilisateur introuvable"));
+          if (user == null) {
+            return const Center(child: Text("Utilisateur introuvable"));
+          }
 
           nameCtrl.text = user.nom;
           phoneCtrl.text = user.phone ?? "";
@@ -60,6 +63,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                 ),
                 const SizedBox(height: 30),
 
+                // Bouton Enregistrer
                 ElevatedButton(
                   onPressed: () async {
                     final updated = UserEntity(
@@ -71,16 +75,30 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       adresse: adresseCtrl.text.trim(),
                     );
 
-                    await ref.read(clientControllerProvider.notifier).updateProfile(updated);
+                    await ref
+                        .read(clientControllerProvider.notifier)
+                        .updateProfile(updated);
 
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Profil mis à jour")),
                       );
-                      Navigator.pop(context);
+
+                      // 🔥 Retour automatique vers ProfilePage
+                      context.pop();
                     }
                   },
                   child: const Text("Enregistrer"),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Bouton Annuler
+                OutlinedButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text("Annuler"),
                 ),
               ],
             ),

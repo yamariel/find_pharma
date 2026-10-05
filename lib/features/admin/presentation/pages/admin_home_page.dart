@@ -50,6 +50,17 @@ class AdminHomePage extends ConsumerWidget {
               title: const Text("Carte des pharmacies"),
               onTap: () => context.push('/map'),
             ),
+
+
+
+            ListTile(
+              leading: const Icon(Icons.person_add),
+              title: const Text("Créer un nouvel admin"),
+              onTap: () {
+                context.push('/admin/create');
+              },
+            ),
+
           ],
         ),
       ),
