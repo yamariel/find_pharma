@@ -12,8 +12,8 @@ import 'core/theme/app_theme.dart';
 import 'core/utils/app_router.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDateFormatting('fr_FR', null);
