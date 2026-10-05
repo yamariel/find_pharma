@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/Client/presentation/pages/profile_edit_page.dart';
 import '../../features/Client/presentation/pages/profile_page.dart';
 import '../../features/Client/presentation/pages/profile_security_page.dart';
-import '../../features/admin/presentation/pages/CreateAdminPage.dart';
+import '../../features/admin/presentation/pages/create_admin_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/visitor_page.dart';
 import '../../features/auth/presentation/pages/register_page_client.dart';
