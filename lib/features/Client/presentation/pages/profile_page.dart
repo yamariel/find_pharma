@@ -172,7 +172,7 @@ class ProfilePage extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Color(0xFF263B32),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

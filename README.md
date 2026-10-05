@@ -344,3 +344,8 @@ git switch -c feat/ma-tache
 
 Un commit par unité logique, les dépendances ajoutées une par une. Aucun
 développement directement sur `main`.
+
+## Module cartographique
+
+Le module autonome reste dans `lib/map`. Voir [son guide d’intégration et de validation](lib/map/README.md).
+La démonstration se lance avec `flutter run -d linux -t lib/map/demo/main.dart`; le démarrage principal Firebase et les routes de l’équipe sont conservés.

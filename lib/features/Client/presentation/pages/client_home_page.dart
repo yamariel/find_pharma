@@ -1,3 +1,4 @@
+import 'package:find_pharma/features/Client/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ class ClientHomePage extends ConsumerStatefulWidget {
 }
 
 class _ClientHomePageState extends ConsumerState<ClientHomePage> {
+  int currentIndex = 0;
   final _medicineController = TextEditingController();
 
   @override
@@ -28,6 +30,15 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
     context.push(uri.toString());
   }
 
+  // Pages affichées dans le body selon l’index
+  late final List<Widget> pages = [
+    _dashboardPage(),       // Onglet 0 : Recherche médicaments
+    _pharmaciesPage(),      // Onglet 1
+    _gardePage(),           // Onglet 2
+    _assistantPage(),       // Onglet 3
+    ProfilePage(),         // Onglet 4
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,73 +54,126 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
         ],
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Text(
-              "Rechercher un médicament",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+      body: pages[currentIndex],
 
-            const SizedBox(height: 20),
-
-            TextField(
-              controller: _medicineController,
-              textInputAction: TextInputAction.search,
-              onSubmitted: (_) => _openMedicineSearch(context),
-              decoration: InputDecoration(
-                hintText: "Nom du médicament...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.transparent,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () => _openMedicineSearch(context),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text("Rechercher"),
-            ),
-
-            const SizedBox(height: 40),
-
-            ListTile(
-              leading: const Icon(Icons.medication),
-              title: const Text('Rechercher un médicament'),
-              onTap: () => context.go('/search-medicines'),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.local_pharmacy),
-              title: const Text('Pharmacies'),
-              onTap: () => context.go('/pharmacies'),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.favorite, color: Colors.red),
-              title: const Text("Mes favoris"),
-              onTap: () => context.push('/favorites'),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Mon profil"),
-              onTap: () => context.push('/profile'),
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        onTap: (i) => setState(() => currentIndex = i),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.medication),
+            label: "Médicaments",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_pharmacy),
+            label: "Pharmacies",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_hospital),
+            label: "Garde",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble),
+            label: "Assistant",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profil",
+          ),
+        ],
       ),
     );
   }
+
+  // ------------------------------
+  // PAGES CLIENT
+  // ------------------------------
+
+  /// Onglet 0 : Dashboard client (recherche médicaments)
+  Widget _dashboardPage() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Rechercher un médicament",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 20),
+
+          TextField(
+            controller: _medicineController,
+            textInputAction: TextInputAction.search,
+            onSubmitted: (_) => _openMedicineSearch(context),
+            decoration: InputDecoration(
+              hintText: "Nom du médicament...",
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: Colors.transparent,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          ElevatedButton(
+            onPressed: () => _openMedicineSearch(context),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text("Rechercher"),
+          ),
+
+          const SizedBox(height: 40),
+
+          ListTile(
+            leading: const Icon(Icons.medication),
+            title: const Text('Rechercher un médicament'),
+            onTap: () => context.go('/search-medicines'),
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.local_pharmacy),
+            title: const Text('Pharmacies'),
+            onTap: () => context.go('/pharmacies'),
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.favorite, color: Colors.red),
+            title: const Text("Mes favoris"),
+            onTap: () => context.push('/favorites'),
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text("Mon profil"),
+            onTap: () => context.push('/profile'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pharmaciesPage() {
+    return const Center(child: Text("Liste des pharmacies"));
+  }
+
+  Widget _gardePage() {
+    return const Center(child: Text("Pharmacies de garde"));
+  }
+
+  Widget _assistantPage() {
+    return const Center(child: Text("Assistant FindPharma"));
+  }
+
 }

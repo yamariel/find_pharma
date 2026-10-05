@@ -1,0 +1,340 @@
+@startuml FindPharma_Modele_Donnees
+
+title Find Pharma — Modèle de données métier
+
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide methods
+
+' ===================== UTILISATEURS =====================
+
+package "Utilisateurs et personnel" {
+
+  class Utilisateur {
+    +id : String
+    +nomComplet : String
+    +telephone : String
+    +email : String [0..1]
+    +actif : Boolean
+    +creeLe : DateTime
+  }
+
+  class MembrePharmacie {
+    +id : String
+    +role : RolePersonnel
+    +actif : Boolean
+    +ajouteLe : DateTime
+  }
+
+  enum RolePersonnel {
+    PROPRIETAIRE
+    GESTIONNAIRE
+    VENDEUR
+  }
+
+  class PresenceVendeur {
+    +id : String
+    +debut : DateTime
+    +fin : DateTime [0..1]
+    +nomPublic : String
+  }
+}
+
+' ===================== PHARMACIES =====================
+
+package "Pharmacies et carte" {
+
+  class Pharmacie {
+    +id : String
+    +nom : String
+    +adresse : String
+    +telephone : String
+    +latitude : Double
+    +longitude : Double
+    +geohash : String
+    +fuseauHoraire : String
+    +photoUrl : String [0..1]
+    +active : Boolean
+    +creeLe : DateTime
+    +/estOuverte : Boolean
+  }
+
+  class PlageOuverture {
+    +id : String
+    +jourSemaine : Integer
+    +heureDebut : Time
+    +heureFin : Time
+  }
+
+  class ExceptionOuverture {
+    +id : String
+    +debut : DateTime
+    +fin : DateTime
+    +ouverte : Boolean
+    +motif : String [0..1]
+  }
+}
+
+' ===================== MEDICAMENTS =====================
+
+package "Catalogue et stock" {
+
+  class Medicament {
+    +id : String
+    +nomCommercial : String
+    +denominationCommune : String
+    +dosage : String
+    +forme : String
+    +conditionnement : String
+    +fabricant : String [0..1]
+    +codeBarres : String [0..1]
+    +nomRecherche : String
+    +imageUrl : String [0..1]
+  }
+
+  class OffreMedicament {
+    +id : String
+    +prixVente : Decimal
+    +devise : String
+    +quantiteEnStock : Integer
+    +quantiteReservee : Integer
+    +seuilAlerte : Integer
+    +publiee : Boolean
+    +miseAJourLe : DateTime
+    +/quantiteDisponible : Integer
+    +/disponible : Boolean
+  }
+
+  class LotStock {
+    +id : String
+    +numeroLot : String
+    +dateExpiration : Date
+    +dateReception : DateTime
+    +coutAchatUnitaire : Decimal
+    +quantiteRestante : Integer
+  }
+
+  class MouvementStock {
+    +id : String
+    +type : TypeMouvement
+    +quantiteSignee : Integer
+    +motif : String [0..1]
+    +creeLe : DateTime
+  }
+
+  enum TypeMouvement {
+    ENTREE
+    VENTE
+    PERTE
+    AJUSTEMENT
+  }
+}
+
+' ===================== COMMANDES =====================
+
+package "Commandes et retrait" {
+
+  class Commande {
+    +id : String
+    +reference : String
+    +statut : StatutCommande
+    +nomClientAuMomentCommande : String
+    +telephoneClientAuMomentCommande : String
+    +creeLe : DateTime
+    +expireLe : DateTime
+    +retireLe : DateTime [0..1]
+    +montantTotal : Decimal
+    +devise : String
+  }
+
+  class LigneCommande {
+    +id : String
+    +libelleMedicament : String
+    +quantite : Integer
+    +prixUnitaire : Decimal
+    +/sousTotal : Decimal
+  }
+
+  enum StatutCommande {
+    EN_ATTENTE
+    CONFIRMEE
+    PRETE
+    RETIREE
+    ANNULEE
+    EXPIREE
+  }
+}
+
+' ===================== VENTES ET RESULTATS =====================
+
+package "Ventes et gestion financière" {
+
+  class Vente {
+    +id : String
+    +reference : String
+    +dateVente : DateTime
+    +montantTotal : Decimal
+    +devise : String
+    +modePaiement : ModePaiement
+    +/coutTotalAchat : Decimal
+    +/margeBrute : Decimal
+  }
+
+  class LigneVente {
+    +id : String
+    +libelleMedicament : String
+    +quantite : Integer
+    +prixVenteUnitaire : Decimal
+    +coutAchatUnitaire : Decimal
+    +/sousTotal : Decimal
+    +/margeBrute : Decimal
+  }
+
+  class Depense {
+    +id : String
+    +libelle : String
+    +categorie : String
+    +montant : Decimal
+    +devise : String
+    +dateDepense : DateTime
+  }
+
+  enum ModePaiement {
+    ESPECES
+    MOBILE_MONEY
+    CARTE
+  }
+}
+
+' ===================== RELATIONS =====================
+
+Utilisateur "1" -- "0..*" MembrePharmacie : appartient via
+Pharmacie "1" -- "1..*" MembrePharmacie : personnel
+MembrePharmacie "1" -- "0..*" PresenceVendeur : assure
+
+Pharmacie "1" *-- "0..*" PlageOuverture : horaires
+Pharmacie "1" *-- "0..*" ExceptionOuverture : exceptions
+
+Pharmacie "1" -- "0..*" OffreMedicament : propose
+Medicament "1" -- "0..*" OffreMedicament : référence
+
+OffreMedicament "1" -- "0..*" LotStock : stock détaillé
+LotStock "1" -- "0..*" MouvementStock : historique
+MembrePharmacie "1" -- "0..*" MouvementStock : enregistre
+
+Utilisateur "1" -- "0..*" Commande : passe
+Pharmacie "1" -- "0..*" Commande : reçoit
+Commande "1" *-- "1..*" LigneCommande : contient
+OffreMedicament "1" -- "0..*" LigneCommande : concerne
+
+Pharmacie "1" -- "0..*" Vente : réalise
+MembrePharmacie "1" -- "0..*" Vente : encaisse
+Commande "0..1" -- "0..1" Vente : aboutit à
+
+Vente "1" *-- "1..*" LigneVente : contient
+LotStock "1" -- "0..*" LigneVente : fournit
+LigneVente "0..1" -- "1" MouvementStock : génère
+
+Pharmacie "1" -- "0..*" Depense : supporte
+MembrePharmacie "1" -- "0..*" Depense : enregistre
+
+' ===================== REGLES METIER =====================
+
+note bottom of Utilisateur
+  Identifiant lié au compte Firebase Authentication.
+  Les mots de passe ne sont pas stockés ici.
+
+  Un utilisateur peut être acheteur et membre
+  du personnel d'une ou plusieurs pharmacies.
+end note
+
+note bottom of Pharmacie
+  La position sert à afficher le marqueur sur la carte.
+  La distance dépend de la position du client :
+  elle n'est pas un attribut fixe de la pharmacie.
+
+  estOuverte est calculé selon l'heure locale,
+  les horaires et les exceptions.
+  Une exception prime sur les horaires habituels.
+
+  Pour un horaire passant minuit :
+  utiliser deux plages sur les jours concernés.
+end note
+
+note bottom of PresenceVendeur
+  Une présence sans date de fin indique
+  un vendeur déclaré sur place.
+
+  Seul son nom public est visible des clients.
+  Plusieurs vendeurs peuvent être présents.
+end note
+
+note bottom of OffreMedicament
+  Une seule offre par couple pharmacie / médicament.
+
+  quantiteDisponible =
+    quantiteEnStock - quantiteReservee
+
+  disponible =
+    publiee ET quantiteDisponible > 0
+
+  Le stock vendable exclut les lots périmés
+  et les unités perdues ou endommagées.
+
+  Les quantités utilisent le conditionnement
+  défini dans le catalogue.
+end note
+
+note bottom of Commande
+  Une commande concerne une seule pharmacie.
+
+  La confirmation réserve le stock.
+  L'annulation ou l'expiration libère la réservation.
+  Le retrait payé crée la vente,
+  diminue le stock et libère la réservation.
+
+  Une commande ne peut produire qu'une vente.
+  Les transitions doivent éviter tout double débit.
+end note
+
+note bottom of LigneCommande
+  Le libellé et le prix sont des copies historiques :
+  une modification du catalogue ne doit pas
+  modifier une commande existante.
+end note
+
+note bottom of LigneVente
+  Une ligne concerne un seul lot.
+
+  Si une vente utilise plusieurs lots du même
+  médicament, créer plusieurs lignes pour
+  conserver leurs coûts d'achat respectifs.
+end note
+
+note bottom of MouvementStock
+  Entrée : quantité positive.
+  Vente ou perte : quantité négative.
+  Ajustement : positif ou négatif.
+
+  Chaque changement de quantité physique
+  produit un mouvement traçable.
+  Une réservation ne change pas le stock physique.
+end note
+
+note bottom of Vente
+  Vente = paiement encaissé sur place.
+
+  Marge brute =
+    montant des ventes - coût des unités vendues
+
+  Résultat simplifié sur une période =
+    marge brute - valeur des pertes - dépenses
+
+  Valoriser les pertes au coût d'achat du lot.
+  Ne pas compter les achats de stock une deuxième
+  fois parmi les dépenses de fonctionnement.
+  Ne pas additionner des devises différentes.
+end note
+
+@enduml
