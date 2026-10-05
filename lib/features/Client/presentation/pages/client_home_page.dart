@@ -1,4 +1,6 @@
 import 'package:find_pharma/features/Client/presentation/pages/profile_page.dart';
+import 'package:find_pharma/features/ai_assistant/presentation/pages/ai_chat_page.dart';
+import 'package:find_pharma/features/map/presentation/pages/map_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,12 +33,12 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
   }
 
   // Pages affichées dans le body selon l’index
-  late final List<Widget> pages = [
-    _dashboardPage(),       // Onglet 0 : Recherche médicaments
-    _pharmaciesPage(),      // Onglet 1
-    _gardePage(),           // Onglet 2
-    _assistantPage(),       // Onglet 3
-    ProfilePage(),         // Onglet 4
+  List<Widget> get pages => [
+    const MapPage(), // Onglet 0 : Carte
+    _dashboardPage(), // Onglet 1 : Médicaments
+    _gardePage(), // Onglet 2 : Pharmacies de garde
+    _assistantPage(), // Onglet 3 : Assistant IA
+    ProfilePage(), // Onglet 4
   ];
 
   @override
@@ -63,13 +65,10 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
         type: BottomNavigationBarType.fixed,
         onTap: (i) => setState(() => currentIndex = i),
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Carte"),
           BottomNavigationBarItem(
             icon: Icon(Icons.medication),
             label: "Médicaments",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_pharmacy),
-            label: "Pharmacies",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_hospital),
@@ -77,12 +76,9 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble),
-            label: "Assistant",
+            label: "Assistant IA",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profil",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil"),
         ],
       ),
     );
@@ -92,7 +88,7 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
   // PAGES CLIENT
   // ------------------------------
 
-  /// Onglet 0 : Dashboard client (recherche médicaments)
+  /// Onglet 1 : Recherche de médicaments
   Widget _dashboardPage() {
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -164,16 +160,11 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
     );
   }
 
-  Widget _pharmaciesPage() {
-    return const Center(child: Text("Liste des pharmacies"));
-  }
-
   Widget _gardePage() {
     return const Center(child: Text("Pharmacies de garde"));
   }
 
   Widget _assistantPage() {
-    return const Center(child: Text("Assistant FindPharma"));
+    return const AiChatPage(embedded: true);
   }
-
 }
