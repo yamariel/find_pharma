@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,7 +12,7 @@ import '../../domain/usecases/delete_admin_usecase.dart';
 
 final adminRepositoryProvider = Provider((ref) {
   return AdminRepositoryImpl(
-    AdminRemoteDataSource(FirebaseFirestore.instance),
+    AdminRemoteDataSource(FirebaseFirestore.instance, FirebaseAuth.instance),
   );
 });
 

@@ -91,7 +91,7 @@ class ProfilePage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
 
-                _infoTile("Téléphone", user.phone ?? "Non renseigné"),
+                _infoTile("Noms", user.nom),
                 _infoTile("Adresse", user.adresse ?? "Non renseignée"),
 
                 const SizedBox(height: 30),
@@ -112,7 +112,7 @@ class ProfilePage extends ConsumerWidget {
                   leading: const Icon(Icons.edit),
                   title: const Text("Modifier mes informations"),
                   onTap: () {
-                    context.go('/profile/edit');
+                    context.push('/profile/edit');
                   },
                 ),
 
@@ -120,7 +120,7 @@ class ProfilePage extends ConsumerWidget {
                   leading: const Icon(Icons.lock),
                   title: const Text("Sécurité du compte"),
                   onTap: () {
-                    context.go('/profile/security');
+                    context.push('/profile/security');
                   },
                 ),
 
@@ -151,7 +151,7 @@ class ProfilePage extends ConsumerWidget {
                 // ============================
                 Center(
                   child: Text(
-                    "FindPharma v1.2.0\nPharmacies et officines certifiées",
+                    "FindPharma v1.0.0\nPharmacies et officines certifiées",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.grey.shade600,
