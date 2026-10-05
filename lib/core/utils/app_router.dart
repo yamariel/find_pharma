@@ -106,8 +106,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
-        builder: (context, state) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       
       GoRoute(
