@@ -1,7 +1,7 @@
 /// Ces horaires décrivent l'ouverture **habituelle**. Ils ne disent rien de la
 /// garde, qui est une information temporelle portée par un calendrier séparé.
 /// Ne jamais filtrer les pharmacies de garde avec ces horaires.
-
+library;
 /// Programme d'une journée : fermée, ouverte en continu, ou ouverte sur une plage.
 sealed class DaySchedule {
   const DaySchedule();
