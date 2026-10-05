@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:find_pharma/main.dart' as app;
+import 'package:find_pharma/map/demo/main.dart' as app;
 import 'package:find_pharma/map/demo/demo_pharmacies.dart';
 import 'package:find_pharma/map/map.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +116,7 @@ void main() {
   testWidgets(
     'Linux: real tiles, selection, overlapping markers and demo scenarios',
     (tester) async {
-      await show(tester, const app.MainApp());
+      await show(tester, const app.MapDemoApp());
       expect(find.byType(FlutterMap), findsOneWidget);
       expect(find.textContaining('DÉMONSTRATION'), findsOneWidget);
       expect(find.textContaining('Kinshasa'), findsOneWidget);
@@ -259,7 +259,7 @@ void main() {
   testWidgets(
     'Linux: actual system location probe (no coordinates persisted)',
     (tester) async {
-      await show(tester, const app.MainApp());
+      await show(tester, const app.MapDemoApp());
       await tap(tester, find.byTooltip('Me localiser et recentrer'));
       await until(
         tester,
