@@ -50,3 +50,5 @@ app.*.map.json
 .env.*
 .env*
 !.env.example
+# Documentation personnelle
+Documentation.md
