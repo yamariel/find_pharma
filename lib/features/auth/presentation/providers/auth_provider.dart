@@ -10,3 +10,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final remote = AuthRemoteDataSource(FirebaseAuth.instance, FirebaseFirestore.instance);
   return AuthRepositoryImpl(remote);
 });
+
+final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
+  return FirebaseAuth.instance;
+});

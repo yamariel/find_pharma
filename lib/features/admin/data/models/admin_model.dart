@@ -17,6 +17,7 @@ class AdminModel extends AdminEntity {
   }
 
   /// AdminModel → Firestore
+  @override
   Map<String, dynamic> toMap() {
     return {
       'nom': nom,
