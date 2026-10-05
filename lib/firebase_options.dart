@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -62,8 +59,15 @@ class DefaultFirebaseOptions {
     projectId: 'find-pharma-f9151',
     storageBucket: 'find-pharma-f9151.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDplanXfZjEsuIGCVig7qW-gZZxevgNYuY',
+    appId: '1:324086752278:ios:a582855f17efc98ee14137',
+    messagingSenderId: '324086752278',
+    projectId: 'find-pharma-f9151',
+    storageBucket: 'find-pharma-f9151.firebasestorage.app',
+    iosBundleId: 'com.findpharmag9.org.findPharma',
+  );
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDplanXfZjEsuIGCVig7qW-gZZxevgNYuY',
     appId: '1:324086752278:ios:a582855f17efc98ee14137',
     messagingSenderId: '324086752278',
