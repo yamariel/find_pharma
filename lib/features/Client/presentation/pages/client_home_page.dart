@@ -41,7 +41,7 @@ class ClientHomePage extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: Colors.grey.shade100,
+                fillColor: Colors.transparent,
               ),
             ),
 

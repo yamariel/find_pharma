@@ -48,40 +48,41 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
 
-                Center(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 80,
-                        width: 80,
-                        child: Image.asset(
-                          'assets/images/find_pharma_icon.png',
+                  Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 80,
+                          width: 80,
+                          child: Image.asset(
+                            'assets/images/find_pharma_icon.png',
+                          ),
                         ),
-                      ),
-                      const Text(
-                        "FindPharma",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                        const Text(
+                          "FindPharma",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        "Trouvez vos médicaments et pharmacies",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
+                        const SizedBox(height: 6),
+                        const Text(
+                          "Trouvez vos médicaments et pharmacies",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 40),
+                  const SizedBox(height: 40),
 
                 OutlinedButton.icon(
                   onPressed: isLoading
@@ -112,9 +113,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
-                const Center(child: Text("ou avec un e-mail")),
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  const Center(child: Text("ou avec un e-mail")),
+                  const SizedBox(height: 20),
 
                 // EMAIL
                 TextFormField(
@@ -126,7 +127,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Colors.transparent,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -140,7 +141,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   },
                 ),
 
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                 // MOT DE PASSE
                 TextFormField(
@@ -153,7 +154,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: Colors.transparent,
                     suffixIcon: IconButton(
                       icon: Icon(
                         showPassword
@@ -178,104 +179,104 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   },
                 ),
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text("Mot de passe oublié ?"),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-
-                ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                    if (_formKey.currentState!.validate()) {
-                      ref.read(authControllerProvider.notifier).signIn(
-                        emailCtrl.text.trim(),
-                        passCtrl.text,
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text("Mot de passe oublié ?"),
                     ),
                   ),
-                  child: isLoading
-                      ? const SizedBox(
-                    height: 22,
-                    width: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                      : const Text('Se connecter'),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Pas encore de compte ?',
-                      style: TextStyle(color: Colors.grey.shade700),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        context.go('/signup/client');
-                      },
-                      child: const Text(
-                        'S’inscrire',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                  ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                      if (_formKey.currentState!.validate()) {
+                        ref.read(authControllerProvider.notifier).signIn(
+                          emailCtrl.text.trim(),
+                          passCtrl.text,
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ],
-                ),
+                    child: isLoading
+                        ? const SizedBox(
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                        : const Text('Se connecter'),
+                  ),
 
-                const SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
-                // 🔥 BOUTON VISITEUR
-                OutlinedButton(
-                  onPressed: () {
-                    context.go('/visitor');
-                  },
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    side: const BorderSide(color: Colors.green),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Pas encore de compte ?',
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.go('/signup/client');
+                        },
+                        child: const Text(
+                          'S’inscrire',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // 🔥 BOUTON VISITEUR
+                  OutlinedButton(
+                    onPressed: () {
+                      context.go('/visitor');
+                    },
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      side: const BorderSide(color: Colors.green),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "Continuer en tant que visiteur",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green,
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    "Continuer en tant que visiteur",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.green,
+
+                  const SizedBox(height: 20),
+
+                  const Center(
+                    child: Text(
+                      "En continuant, vous acceptez les Conditions et la Confidentialité.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12),
                     ),
                   ),
-                ),
 
-
-                const Spacer(),
-
-                const Center(
-                  child: Text(
-                    "En continuant, vous acceptez les Conditions et la Confidentialité.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+
   }
 }
