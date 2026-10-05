@@ -34,8 +34,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isVisitor = location == '/visitor';
 
       final isSignup =
-          location == '/signup/client' ||
-              location == '/signup/pharmacy';
+          location == '/signup/client' || location == '/signup/pharmacy';
 
       // Attendre la résolution de l'authentification Firebase.
       if (isLoading) {
@@ -107,7 +106,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
+      
       GoRoute(
         path: '/signup/client',
         builder: (context, state) => const RegisterPageClient(),
@@ -133,13 +135,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/pharmacies',
         builder: (context, state) => const PharmaciesPage(),
       ),
-      GoRoute(
-        path: '/map',
-        builder: (context, state) => const MapPage(),
-      ),
+      GoRoute(path: '/map', builder: (context, state) => const MapPage()),
       GoRoute(
         path: '/search-medicines',
-        builder: (context, state) => const SearchMedicinesPage(),
+        builder: (context, state) => SearchMedicinesPage(
+          initialQuery: state.uri.queryParameters['query'] ?? '',
+        ),
       ),
       GoRoute(
         path: '/ai-chat',
