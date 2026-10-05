@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/dio_provider.dart';
 import '../../../pharmacies/data/datasources/pharmacy_local_mock_datasource.dart';
+import '../../../pharmacies/domain/entities/pharmacy.dart'; //
 import '../../data/datasources/ai_remote_data_source.dart';
 import '../../data/repositories/ai_repository_impl.dart';
 import '../../domain/usecases/ask_health_assistant_usecase.dart';
@@ -48,12 +49,23 @@ class ChatMessage {
 class AiChatState {
   final List<ChatMessage> messages;
   final bool isLoading;
-  AiChatState({required this.messages, required this.isLoading});
+  final List<Pharmacy> pharmacies;
 
-  AiChatState copyWith({List<ChatMessage>? messages, bool? isLoading}) {
+  AiChatState({
+    required this.messages,
+    required this.isLoading,
+    this.pharmacies = const [],
+  });
+
+  AiChatState copyWith({
+    List<ChatMessage>? messages,
+    bool? isLoading,
+    List<Pharmacy>? pharmacies,
+  }) {
     return AiChatState(
       messages: messages ?? this.messages,
       isLoading: isLoading ?? this.isLoading,
+      pharmacies: pharmacies ?? this.pharmacies,
     );
   }
 }
@@ -80,7 +92,6 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
   Future<void> sendMessage(String prompt) async {
     if (prompt.trim().isEmpty) return;
 
-    // on crée le message utilisateur visible dans l'UI
     final userMessage = ChatMessage(
       text: prompt,
       isUser: true,
@@ -99,7 +110,6 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
         (p) => "- Nom : ${p.name} | Quartier : ${p.district} | Adresse : ${p.address ?? 'Non spécifiée'} | Téléphone : ${p.phone}",
       ).join('\n');
 
-      // on construit le prompt enrichi avec les vraies données textuelles pour l'IA
       final enrichedPrompt = """
 Voici la liste des pharmacies actuellement enregistrées dans le système :
 $pharmaciesContext
@@ -107,7 +117,6 @@ $pharmaciesContext
 Question de l'utilisateur : $prompt
 """;
 
-      // appel à l'IA avec le prompt enrichi
       final suggestion = await useCase(enrichedPrompt);
       
       final aiMessage = ChatMessage(
@@ -119,6 +128,7 @@ Question de l'utilisateur : $prompt
       state = state.copyWith(
         messages: [...state.messages, aiMessage],
         isLoading: false,
+        pharmacies: pharmacies,
       );
     } catch (e) {
       final errorMessage = ChatMessage(
