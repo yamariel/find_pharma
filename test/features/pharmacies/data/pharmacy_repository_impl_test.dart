@@ -65,6 +65,7 @@ PharmacyModel buildPharmacyModel({String id = 'ph_akwa_001'}) {
     latitude: 4.0511,
     longitude: 9.7085,
     phone: '+237690000001',
+    email: 'contact@pharmacieducentre.cm',
   );
 }
 
@@ -115,6 +116,7 @@ void main() {
             latitude: 4.0469,
             longitude: 9.6900,
             phone: '+237690000009',
+            email: 'manuel@findpharma.cm',
           ),
         ),
         returnsNormally,
@@ -219,6 +221,7 @@ void main() {
         latitude: 4.0469,
         longitude: 9.6900,
         phone: '+237690000003',
+        email: 'bonanjo@findpharma.cm',
       );
 
       await repository.savePharmacy(entity);

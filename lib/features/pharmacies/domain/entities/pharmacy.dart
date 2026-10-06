@@ -15,6 +15,7 @@ class Pharmacy {
     required this.latitude,
     required this.longitude,
     required this.phone,
+    required this.email,
     this.address,
     this.secondaryPhone,
     this.verifiedByPharmacy = false,
@@ -34,6 +35,7 @@ class Pharmacy {
   /// Numéro principal, celui que compose le bouton d'appel.
   final String phone;
 
+  final String? email;
   final String? address;
   final String? secondaryPhone;
 
@@ -77,6 +79,7 @@ class Pharmacy {
     String? secondaryPhone,
     bool? verifiedByPharmacy,
     DateTime? updatedAt,
+    String? email,
   }) {
     return Pharmacy(
       id: id ?? this.id,
@@ -85,6 +88,7 @@ class Pharmacy {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       phone: phone ?? this.phone,
+      email: email ?? this.email,
       address: address ?? this.address,
       secondaryPhone: secondaryPhone ?? this.secondaryPhone,
       verifiedByPharmacy: verifiedByPharmacy ?? this.verifiedByPharmacy,
@@ -102,6 +106,7 @@ class Pharmacy {
         other.latitude == latitude &&
         other.longitude == longitude &&
         other.phone == phone &&
+        other.email == email &&
         other.address == address &&
         other.secondaryPhone == secondaryPhone &&
         other.verifiedByPharmacy == verifiedByPharmacy &&
@@ -116,6 +121,7 @@ class Pharmacy {
     latitude,
     longitude,
     phone,
+    email,
     address,
     secondaryPhone,
     verifiedByPharmacy,
