@@ -19,6 +19,7 @@ void main() {
     PharmacyFields.district: 'Akwa',
     PharmacyFields.position: const GeoPoint(4.0511, 9.7085),
     PharmacyFields.phone: '+237690000001',
+    PharmacyFields.email: 'contact@pharmacieducentre.cm',
     PharmacyFields.address: 'Rue Joss, face marché',
     PharmacyFields.secondaryPhone: '+237690000002',
     PharmacyFields.verifiedByPharmacy: true,
@@ -31,6 +32,7 @@ void main() {
     PharmacyFields.district: 'Akwa',
     PharmacyFields.position: const GeoPoint(4.0511, 9.7085),
     PharmacyFields.phone: '+237690000001',
+    PharmacyFields.email: 'contact@pharmacieducentre.cm',
   };
 
   group('PharmacyModel.fromFirestore', () {
@@ -46,6 +48,7 @@ void main() {
       expect(model.latitude, 4.0511);
       expect(model.longitude, 9.7085);
       expect(model.phone, '+237690000001');
+      expect(model.email, 'contact@pharmacieducentre.cm');
       expect(model.address, 'Rue Joss, face marché');
       expect(model.secondaryPhone, '+237690000002');
       expect(model.verifiedByPharmacy, isTrue);
@@ -195,6 +198,7 @@ void main() {
         latitude: 4.0469,
         longitude: 9.6900,
         phone: '+237690000003',
+        email: 'bonanjo@findpharma.cm',
         address: 'Boulevard de la Liberté',
         verifiedByPharmacy: true,
       );
@@ -212,6 +216,7 @@ void main() {
         district: 'Bonanjo',
         latitude: 4.0469,
         longitude: 9.6900,
+        email: 'bonanjo@findpharma.cm',
         phone: '+237690000003',
       );
 

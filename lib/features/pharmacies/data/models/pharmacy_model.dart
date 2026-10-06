@@ -12,6 +12,7 @@ abstract final class PharmacyFields {
   static const String district = 'district';
   static const String position = 'position';
   static const String phone = 'phone';
+  static const String email = 'email';
   static const String address = 'address';
   static const String secondaryPhone = 'secondaryPhone';
   static const String verifiedByPharmacy = 'verifiedByPharmacy';
@@ -31,6 +32,7 @@ class PharmacyModel extends Pharmacy {
     required super.latitude,
     required super.longitude,
     required super.phone,
+    required super.email,
     super.address,
     super.secondaryPhone,
     super.verifiedByPharmacy,
@@ -54,6 +56,7 @@ class PharmacyModel extends Pharmacy {
       latitude: position.latitude,
       longitude: position.longitude,
       phone: _requireString(data, PharmacyFields.phone, id),
+      email: _optionalString(data, PharmacyFields.email),
       address: _optionalString(data, PharmacyFields.address),
       secondaryPhone: _optionalString(data, PharmacyFields.secondaryPhone),
       verifiedByPharmacy: _optionalBool(data, PharmacyFields.verifiedByPharmacy),
@@ -70,6 +73,7 @@ class PharmacyModel extends Pharmacy {
       latitude: pharmacy.latitude,
       longitude: pharmacy.longitude,
       phone: pharmacy.phone,
+      email: pharmacy.email,
       address: pharmacy.address,
       secondaryPhone: pharmacy.secondaryPhone,
       verifiedByPharmacy: pharmacy.verifiedByPharmacy,
@@ -90,6 +94,7 @@ class PharmacyModel extends Pharmacy {
       PharmacyFields.district: district,
       PharmacyFields.position: GeoPoint(latitude, longitude),
       PharmacyFields.phone: phone,
+      PharmacyFields.email: email,
       PharmacyFields.address: address,
       PharmacyFields.secondaryPhone: secondaryPhone,
       PharmacyFields.verifiedByPharmacy: verifiedByPharmacy,

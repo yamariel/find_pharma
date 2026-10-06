@@ -27,6 +27,7 @@ const Pharmacy akwa = Pharmacy(
   district: 'Akwa',
   latitude: 4.0511,
   longitude: 9.7085,
+  email: 'contact@pharmacieducentre.cm',
   phone: '+237690000001',
 );
 
@@ -36,6 +37,7 @@ const Pharmacy bonanjo = Pharmacy(
   district: 'Bonanjo',
   latitude: 4.0469,
   longitude: 9.6900,
+  email: 'bonanjo@findpharma.cm',
   phone: '+237690000002',
 );
 
@@ -45,6 +47,7 @@ const Pharmacy deido = Pharmacy(
   district: 'Deido',
   latitude: 4.0667,
   longitude: 9.7000,
+  email: 'deido@findpharma.cm',
   phone: '+237690000003',
 );
 
