@@ -1,5 +1,6 @@
 
 import 'package:find_pharma/features/admin/presentation/pages/admin_home_page.dart';
+import 'package:find_pharma/features/pharmacies/presentation/pages/pharmacy_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,7 +60,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/login';
         }
 
-        if (publicRoutes.contains(location)) {
+        if (publicRoutes.contains(location) ||
+            location.startsWith('/pharmacies/')) {
           return null;
         }
 
@@ -129,9 +131,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/client',
         builder: (context, state) => const ClientHomePage(),
       ),
-      GoRoute(
+            GoRoute(
         path: '/pharmacies',
         builder: (context, state) => const PharmaciesPage(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => PharmacyDetailPage(
+              pharmacyId: state.pathParameters['id']!,
+            ),
+          ),
+        ],
       ),
       GoRoute(path: '/map', builder: (context, state) => const MapPage()),
       GoRoute(
