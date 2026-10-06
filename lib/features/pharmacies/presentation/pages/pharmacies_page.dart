@@ -26,7 +26,10 @@ class PharmaciesPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Pharmacies')),
-      body: pharmacies.when(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 640),
+          child: pharmacies.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (Object error, StackTrace stackTrace) => _ErrorView(
           message: error is Failure
@@ -53,6 +56,8 @@ class PharmaciesPage extends ConsumerWidget {
             ),
           );
         },
+      ),
+        ),
       ),
     );
   }
