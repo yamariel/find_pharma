@@ -1,12 +1,14 @@
 
-import 'package:find_pharma/features/admin/presentation/pages/admin_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/Client/presentation/pages/profile_edit_page.dart';
+import '../../features/Client/presentation/pages/favorites_page.dart';
 import '../../features/Client/presentation/pages/profile_page.dart';
 import '../../features/Client/presentation/pages/profile_security_page.dart';
+import '../../features/admin/presentation/pages/admin_home_page.dart';
+import '../../features/admin/presentation/pages/admin_section_page.dart';
 import '../../features/admin/presentation/pages/create_admin_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/visitor_page.dart';
@@ -113,8 +115,32 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RegisterPageClient(),
       ),
       GoRoute(
+        path: '/signup/pharmacy',
+        builder: (context, state) => const RegisterPagePharmacy(),
+      ),
+      GoRoute(
+        path: '/admin-verify-pharmacies',
+        builder: (context, state) => const AdminSectionPage(
+          title: 'Pharmacies à vérifier',
+          message: 'Les demandes de vérification apparaîtront ici.',
+          icon: Icons.verified,
+        ),
+      ),
+      GoRoute(
+        path: '/admin-users',
+        builder: (context, state) => const AdminSectionPage(
+          title: 'Gestion des utilisateurs',
+          message: 'La gestion des utilisateurs apparaîtra ici.',
+          icon: Icons.people,
+        ),
+      ),
+      GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: '/favorites',
+        builder: (context, state) => const FavoritesPage(),
       ),
       GoRoute(
         path: '/profile/edit',

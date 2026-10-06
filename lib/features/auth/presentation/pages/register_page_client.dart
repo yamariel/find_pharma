@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_controller.dart';
 
 class RegisterPageClient extends ConsumerStatefulWidget {
-  const RegisterPageClient({super.key});
+  final bool pharmacy;
+
+  const RegisterPageClient({super.key, this.pharmacy = false});
 
   @override
   ConsumerState<RegisterPageClient> createState() => _RegisterPageClientState();
@@ -77,13 +79,17 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
-                      "Créer un compte",
+                    Text(
+                      widget.pharmacy
+                          ? "Créer un compte pharmacie"
+                          : "Créer un compte",
                       style: TextStyle(fontSize: 18),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
-                      "Rejoignez FindPharma pour enregistrer vos pharmacies et médicaments favoris.",
+                    Text(
+                      widget.pharmacy
+                          ? "Référencez votre officine et gérez ses disponibilités."
+                          : "Rejoignez FindPharma pour enregistrer vos pharmacies et médicaments favoris.",
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14),
                     ),
@@ -247,13 +253,21 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                       ? null
                       : () {
                     if (_formKey.currentState!.validate()) {
-                      ref
-                          .read(authControllerProvider.notifier)
-                          .signUpClient(
-                        nameCtrl.text.trim(),
-                        emailCtrl.text.trim(),
-                        passCtrl.text,
-                      );
+                      final controller =
+                          ref.read(authControllerProvider.notifier);
+                      if (widget.pharmacy) {
+                        controller.signUpPharmacy(
+                          nameCtrl.text.trim(),
+                          emailCtrl.text.trim(),
+                          passCtrl.text,
+                        );
+                      } else {
+                        controller.signUpClient(
+                          nameCtrl.text.trim(),
+                          emailCtrl.text.trim(),
+                          passCtrl.text,
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -268,7 +282,9 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
                     width: 22,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                      : const Text('Créer mon compte'),
+                      : Text(widget.pharmacy
+                          ? 'Créer mon compte pharmacie'
+                          : 'Créer mon compte'),
                 ),
 
                 const SizedBox(height: 20),
@@ -299,4 +315,8 @@ class _RegisterPageClientState extends ConsumerState<RegisterPageClient> {
       ),
     );
   }
+}
+
+class RegisterPagePharmacy extends RegisterPageClient {
+  const RegisterPagePharmacy({super.key}) : super(pharmacy: true);
 }

@@ -33,7 +33,7 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
         onTap: (i) {
           // 🔥 Visiteur : accès limité
           if (i == 3 || i == 4) {
-            context.push('/create-account');
+            context.push('/signup/client');
             return;
           }
           setState(() => currentIndex = i);
@@ -117,7 +117,7 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
             const SizedBox(height: 16),
 
             OutlinedButton(
-              onPressed: () => context.push('/signup-client'),
+              onPressed: () => context.push('/signup/client'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
@@ -130,7 +130,7 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
             const SizedBox(height: 16),
 
             OutlinedButton(
-              onPressed: () => context.push('/signup-pharmacy'),
+              onPressed: () => context.push('/signup/pharmacy'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 side: const BorderSide(color: Colors.green),

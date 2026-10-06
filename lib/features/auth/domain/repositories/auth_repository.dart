@@ -17,6 +17,12 @@ abstract class AuthRepository {
     String? adresse,
   });
 
+  Future<UserEntity> registerPharmacyUsecase({
+    required String nom,
+    required String email,
+    required String password,
+  });
+
   Future<void> logoutUsecase();
 
   Future<UserEntity?> signInWithGoogle();

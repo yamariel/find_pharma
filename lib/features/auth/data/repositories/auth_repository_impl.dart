@@ -33,6 +33,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<UserEntity> registerPharmacyUsecase({
+    required String nom,
+    required String email,
+    required String password,
+  }) {
+    return remote.signUpPharmacy(nom, email, password);
+  }
+
+  @override
   Future<UserEntity?> signIn({required String email, required String password}) {
     return remote.signIn(email, password);
   }

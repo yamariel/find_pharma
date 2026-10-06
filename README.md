@@ -139,7 +139,6 @@ lib/
 	│   │   │   ├── inventory_item_model.dart
 	│   │   │   └── medicine_model.dart
 	│   │   └── repositories/
-	│   │       ├── fake_medicine_repository.dart
 	│   │       └── medicine_repository_impl.dart
 	│   ├── domain/
 	│   │   ├── entities/

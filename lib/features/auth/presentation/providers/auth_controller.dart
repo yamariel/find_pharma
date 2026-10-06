@@ -44,6 +44,22 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
     );
   }
 
+  Future<void> signUpPharmacy(
+      String name,
+      String email,
+      String password,
+      ) async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(
+          () => repo.registerPharmacyUsecase(
+        nom: name,
+        email: email.trim(),
+        password: password,
+      ),
+    );
+  }
+
   Future<void> signOut() async {
     state = const AsyncLoading();
 

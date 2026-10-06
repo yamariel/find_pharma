@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../ai_assistant/presentation/pages/ai_chat_page.dart';
 import '../../../auth/presentation/providers/auth_controller.dart';
+import '../../../pharmacies/presentation/pages/pharmacies_page.dart';
 
 class ClientHomePage extends ConsumerStatefulWidget {
   const ClientHomePage({super.key});
@@ -33,9 +35,9 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
   // Pages affichées dans le body selon l’index
   late final List<Widget> pages = [
     _dashboardPage(),       // Onglet 0 : Recherche médicaments
-    _pharmaciesPage(),      // Onglet 1
-    _gardePage(),           // Onglet 2
-    _assistantPage(),       // Onglet 3
+    const PharmaciesPage(), // Onglet 1
+    const PharmaciesPage(), // Onglet 2 : filtre de garde à brancher sur les données
+    const AiChatPage(),     // Onglet 3
     ProfilePage(),         // Onglet 4
   ];
 
@@ -162,18 +164,6 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
         ],
       ),
     );
-  }
-
-  Widget _pharmaciesPage() {
-    return const Center(child: Text("Liste des pharmacies"));
-  }
-
-  Widget _gardePage() {
-    return const Center(child: Text("Pharmacies de garde"));
-  }
-
-  Widget _assistantPage() {
-    return const Center(child: Text("Assistant FindPharma"));
   }
 
 }
