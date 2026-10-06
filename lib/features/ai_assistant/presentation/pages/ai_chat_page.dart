@@ -147,11 +147,17 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                           text: message.text,
                           time: message.timestamp,
                         ),
-                        
-                        if (!message.isUser && aiChat.pharmacies.isNotEmpty)
+
+                        if (!message.isUser &&
+                            (message.text.contains("Pharmacie") ||
+                                message.text.contains("quartier")))
                           ...aiChat.pharmacies.map(
                             (pharmacy) => Padding(
-                              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+                              padding: const EdgeInsets.only(
+                                top: 8.0,
+                                left: 8.0,
+                                right: 8.0,
+                              ),
                               child: PharmacyCardWidget(
                                 name: pharmacy.name,
                                 district: pharmacy.district,
