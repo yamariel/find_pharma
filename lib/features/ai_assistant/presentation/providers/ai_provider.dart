@@ -5,8 +5,9 @@ import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/dio_provider.dart';
-import '../../../pharmacies/data/datasources/pharmacy_local_mock_datasource.dart';
 import '../../../pharmacies/domain/entities/pharmacy.dart';
+import '../../../pharmacies/domain/repositories/pharmacy_repository.dart';
+import '../../../pharmacies/presentation/providers/pharmacy_provider.dart';
 import '../../data/datasources/ai_remote_data_source.dart';
 import '../../data/repositories/ai_repository_impl.dart';
 import '../../domain/usecases/ask_health_assistant_usecase.dart';
@@ -26,10 +27,6 @@ final askHealthAssistantUsecaseProvider = Provider<AskHealthAssistantUsecase>((
 ) {
   final repo = ref.read(aiRepositoryImplProvider);
   return AskHealthAssistantUsecase(repositories: repo);
-});
-
-final _mockDatasource = Provider<PharmacyLocalMockDatasource>((ref) {
-  return PharmacyLocalMockDatasource();
 });
 
 class ChatMessage {
@@ -94,11 +91,11 @@ class AiChatState {
 
 class AiChatNotifier extends StateNotifier<AiChatState> {
   final AskHealthAssistantUsecase useCase;
-  final PharmacyLocalMockDatasource pharmacyDatasource;
+  final PharmacyRepository pharmacyRepository;
 
   String? get userId => FirebaseAuth.instance.currentUser?.uid;
 
-  AiChatNotifier(this.useCase, this.pharmacyDatasource)
+  AiChatNotifier(this.useCase, this.pharmacyRepository)
     : super(
         AiChatState(
           messages: [
@@ -230,8 +227,16 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
     final userMessageSaveError = state.errorMessage;
 
     try {
-      //on récupère les pharmacies via le mock injecté
-      final pharmacies = await pharmacyDatasource.getPharmacies();
+      //on récupère les pharmacies depuis Firestore.
+      //une panne ne doit pas empêcher l'assistant de répondre : le contexte
+      //pharmacies est facultatif dans le prompt.
+      List<Pharmacy> pharmacies = const [];
+      try {
+        pharmacies = await pharmacyRepository.getPharmacies();
+      } on Failure {
+        pharmacies = const [];
+      }
+
       final pharmaciesContext = pharmacies
           .map(
             (p) =>
@@ -285,6 +290,6 @@ final aiChatProvider = StateNotifierProvider<AiChatNotifier, AiChatState>((
   ref,
 ) {
   final useCase = ref.read(askHealthAssistantUsecaseProvider);
-  final mockDatasource = ref.read(_mockDatasource);
-  return AiChatNotifier(useCase, mockDatasource);
+  final repository = ref.read(pharmacyRepositoryProvider);
+  return AiChatNotifier(useCase, repository);
 });
