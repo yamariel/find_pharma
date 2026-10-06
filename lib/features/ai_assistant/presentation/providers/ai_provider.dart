@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/dio_provider.dart';
-import '../../../pharmacies/data/datasources/pharmacy_local_mock_datasource.dart';
+import '../../../pharmacies/domain/repositories/pharmacy_repository.dart';
+import '../../../pharmacies/presentation/providers/pharmacy_provider.dart';
 import '../../../pharmacies/domain/entities/pharmacy.dart';
 import '../../data/datasources/ai_remote_data_source.dart';
 import '../../data/repositories/ai_repository_impl.dart';
@@ -26,10 +27,6 @@ final askHealthAssistantUsecaseProvider = Provider<AskHealthAssistantUsecase>((
 ) {
   final repo = ref.read(aiRepositoryImplProvider);
   return AskHealthAssistantUsecase(repositories: repo);
-});
-
-final _mockDatasource = Provider<PharmacyLocalMockDatasource>((ref) {
-  return PharmacyLocalMockDatasource();
 });
 
 class ChatMessage {
@@ -94,7 +91,7 @@ class AiChatState {
 
 class AiChatNotifier extends StateNotifier<AiChatState> {
   final AskHealthAssistantUsecase useCase;
-  final PharmacyLocalMockDatasource pharmacyDatasource;
+  final PharmacyRepository pharmacyDatasource;
 
   String? get userId => FirebaseAuth.instance.currentUser?.uid;
 
@@ -230,7 +227,7 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
     final userMessageSaveError = state.errorMessage;
 
     try {
-      //on récupère les pharmacies via le mock injecté
+      // Même catalogue métier que la carte et les autres parcours.
       final pharmacies = await pharmacyDatasource.getPharmacies();
       final pharmaciesContext = pharmacies
           .map(
@@ -285,6 +282,6 @@ final aiChatProvider = StateNotifierProvider<AiChatNotifier, AiChatState>((
   ref,
 ) {
   final useCase = ref.read(askHealthAssistantUsecaseProvider);
-  final mockDatasource = ref.read(_mockDatasource);
-  return AiChatNotifier(useCase, mockDatasource);
+  final repository = ref.watch(pharmacyRepositoryProvider);
+  return AiChatNotifier(useCase, repository);
 });

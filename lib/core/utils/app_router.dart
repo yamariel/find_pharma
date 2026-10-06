@@ -133,7 +133,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/pharmacies',
         builder: (context, state) => const PharmaciesPage(),
       ),
-      GoRoute(path: '/map', builder: (context, state) => const MapPage()),
+      GoRoute(
+        path: '/map',
+        builder: (context, state) => MapPage(
+          selectedPharmacyId: state.uri.queryParameters['pharmacyId'],
+        ),
+      ),
       GoRoute(
         path: '/search-medicines',
         builder: (context, state) => SearchMedicinesPage(

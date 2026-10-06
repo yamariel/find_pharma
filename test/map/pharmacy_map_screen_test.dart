@@ -22,6 +22,31 @@ class MemoryTiles extends TileProvider {
 }
 
 void main() {
+  testWidgets(
+    'destination received before catalogue remains selected after loading',
+    (tester) async {
+      final location = FakeLocation();
+      final routing = FakeRouting();
+      final tiles = MemoryTiles();
+      Widget screen(bool loading) => MaterialApp(
+        home: PharmacyMapScreen(
+          pharmacies: loading ? [] : pharmacies,
+          loading: loading,
+          selectedPharmacyId: 'a',
+          locationService: location,
+          routingService: routing,
+          tileProvider: tiles,
+        ),
+      );
+      await tester.pumpWidget(screen(true));
+      await tester.pump();
+      await tester.pumpWidget(screen(false));
+      await tester.pumpAndSettle();
+      expect(find.text('Présence des vendeurs non renseignée'), findsOneWidget);
+      expect(location.calls, 0);
+      expect(tester.takeException(), isNull);
+    },
+  );
   late FakeLocation location;
   late FakeRouting routing;
   setUp(() {

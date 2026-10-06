@@ -123,13 +123,13 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
           ListTile(
             leading: const Icon(Icons.medication),
             title: const Text('Rechercher un médicament'),
-            onTap: () => context.go('/search-medicines'),
+            onTap: () => context.push('/search-medicines'),
           ),
 
           ListTile(
             leading: const Icon(Icons.local_pharmacy),
             title: const Text('Pharmacies'),
-            onTap: () => context.go('/pharmacies'),
+            onTap: () => context.push('/pharmacies'),
           ),
 
           ListTile(

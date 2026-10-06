@@ -164,6 +164,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                                 right: 8.0,
                               ),
                               child: PharmacyCardWidget(
+                                pharmacyId: pharmacy.id,
                                 name: pharmacy.name,
                                 district: pharmacy.district,
                                 phone: pharmacy.phone,
