@@ -87,6 +87,12 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     final aiChat = ref.watch(aiChatProvider);
     final colorScheme = Theme.of(context).colorScheme;
     ref.listen(aiChatProvider, (previous, next) {
+      // if (next.errorMessage != null &&
+      //     next.errorMessage != previous?.errorMessage) {
+      //   ScaffoldMessenger.of(context)
+      //       .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      // }
+
       if (previous?.messages.length != next.messages.length ||
           (previous?.isLoading == true && next.isLoading == false)) {
         Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
@@ -148,10 +154,12 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                           time: message.timestamp,
                         ),
 
-                        if (!message.isUser &&
-                            (message.text.contains("Pharmacie") ||
-                                message.text.contains("quartier")))
-                          ...aiChat.pharmacies.map(
+                        if (!message.isUser)
+                          ...aiChat.pharmacies.where(
+                            (pharmacy) => message.text.toLowerCase().contains(
+                              pharmacy.name.toLowerCase(),
+                            ),
+                          ).map(
                             (pharmacy) => Padding(
                               padding: const EdgeInsets.only(
                                 top: 8.0,
