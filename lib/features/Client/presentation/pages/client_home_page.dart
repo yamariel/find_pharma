@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../auth/presentation/providers/auth_controller.dart';
 
 class ClientHomePage extends ConsumerStatefulWidget {
   const ClientHomePage({super.key});
@@ -44,19 +43,8 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("FindPharma - Client"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              ref.read(authControllerProvider.notifier).signOut();
-            },
-          ),
-        ],
-      ),
 
-      body: pages[currentIndex],
+      body: SafeArea(child:  pages[currentIndex]),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -165,6 +153,6 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
   }
 
   Widget _assistantPage() {
-    return const AiChatPage(embedded: true);
+    return const AiChatPage();
   }
 }

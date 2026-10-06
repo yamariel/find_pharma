@@ -6,9 +6,8 @@ import '../widgets/chat_bubble.dart';
 import '../widgets/pharmacie_card.dart';
 
 class AiChatPage extends ConsumerStatefulWidget {
-  final bool embedded;
 
-  const AiChatPage({super.key, this.embedded = false});
+  const AiChatPage({super.key});
 
   @override
   ConsumerState<AiChatPage> createState() => _AiChatPageState();
@@ -43,55 +42,55 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     }
   }
 
-  Future<void> _showDialog(int messageIndex) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Voulez-vous supprimer ce message?'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                  'Cette action est irréversible et le message disparaîtra de la liste de discussion.',
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annuler'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text(
-                'Supprimer',
-                style: TextStyle(color: Colors.red),
-              ),
-              onPressed: () {
-                ref.read(aiChatProvider.notifier).deleteMessage(messageIndex);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _showDialog(int messageIndex) async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Voulez-vous supprimer ce message?'),
+  //         content: const SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               Text(
+  //                 'Cette action est irréversible et le message disparaîtra de la liste de discussion.',
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: const Text('Annuler'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //           TextButton(
+  //             child: const Text(
+  //               'Supprimer',
+  //               style: TextStyle(color: Colors.red),
+  //             ),
+  //             onPressed: () {
+  //               ref.read(aiChatProvider.notifier).deleteMessage(messageIndex);
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     final aiChat = ref.watch(aiChatProvider);
     final colorScheme = Theme.of(context).colorScheme;
     ref.listen(aiChatProvider, (previous, next) {
-      // if (next.errorMessage != null &&
-      //     next.errorMessage != previous?.errorMessage) {
-      //   ScaffoldMessenger.of(context)
-      //       .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
-      // }
+      if (next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      }
 
       if (previous?.messages.length != next.messages.length ||
           (previous?.isLoading == true && next.isLoading == false)) {
@@ -100,9 +99,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     });
 
     return Scaffold(
-      appBar: widget.embedded
-          ? null
-          : AppBar(title: const Text("Find Pharma AI")),
+      appBar: AppBar(title: const Text("Find Pharma AI")),
       body: SafeArea(
         child: Column(
           children: [
@@ -146,9 +143,9 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ChatBubble(
-                          onLongPress: message.isUser == true
-                              ? () => _showDialog(i)
-                              : null,
+                          // onLongPress: message.isUser == true
+                          //     ? () => _showDialog(i)
+                          //     : null,
                           isUser: message.isUser,
                           text: message.text,
                           time: message.timestamp,
