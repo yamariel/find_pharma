@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/ai_provider.dart';
 import '../widgets/chat_bubble.dart';
+import '../widgets/pharmacie_card.dart';
 
 class AiChatPage extends ConsumerStatefulWidget {
-  const AiChatPage({super.key});
+  final bool embedded;
+
+  const AiChatPage({super.key, this.embedded = false});
 
   @override
   ConsumerState<AiChatPage> createState() => _AiChatPageState();
@@ -43,7 +46,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
   Future<void> _showDialog(int messageIndex) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Voulez-vous supprimer ce message?'),
@@ -84,6 +87,12 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     final aiChat = ref.watch(aiChatProvider);
     final colorScheme = Theme.of(context).colorScheme;
     ref.listen(aiChatProvider, (previous, next) {
+      // if (next.errorMessage != null &&
+      //     next.errorMessage != previous?.errorMessage) {
+      //   ScaffoldMessenger.of(context)
+      //       .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      // }
+
       if (previous?.messages.length != next.messages.length ||
           (previous?.isLoading == true && next.isLoading == false)) {
         Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
@@ -91,7 +100,9 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Find Pharma AI")),
+      appBar: widget.embedded
+          ? null
+          : AppBar(title: const Text("Find Pharma AI")),
       body: SafeArea(
         child: Column(
           children: [
@@ -131,13 +142,38 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                   final message = aiChat.messages[i];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ChatBubble(
-                      onLongPress: message.isUser == true
-                          ? () => _showDialog(i)
-                          : null,
-                      isUser: message.isUser,
-                      text: message.text,
-                      time: message.timestamp,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ChatBubble(
+                          onLongPress: message.isUser == true
+                              ? () => _showDialog(i)
+                              : null,
+                          isUser: message.isUser,
+                          text: message.text,
+                          time: message.timestamp,
+                        ),
+
+                        if (!message.isUser)
+                          ...aiChat.pharmacies.where(
+                            (pharmacy) => message.text.toLowerCase().contains(
+                              pharmacy.name.toLowerCase(),
+                            ),
+                          ).map(
+                            (pharmacy) => Padding(
+                              padding: const EdgeInsets.only(
+                                top: 8.0,
+                                left: 8.0,
+                                right: 8.0,
+                              ),
+                              child: PharmacyCardWidget(
+                                name: pharmacy.name,
+                                district: pharmacy.district,
+                                phone: pharmacy.phone,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   );
                 },
@@ -151,7 +187,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                     child: TextField(
                       minLines: 1,
                       maxLines: 5,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Posez votre question...",
                         border: InputBorder.none,
                       ),
