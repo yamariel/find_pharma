@@ -43,44 +43,44 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     }
   }
 
-  Future<void> _showDialog(int messageIndex) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Voulez-vous supprimer ce message?'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                  'Cette action est irréversible et le message disparaîtra de la liste de discussion.',
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annuler'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text(
-                'Supprimer',
-                style: TextStyle(color: Colors.red),
-              ),
-              onPressed: () {
-                ref.read(aiChatProvider.notifier).deleteMessage(messageIndex);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _showDialog(int messageIndex) async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Voulez-vous supprimer ce message?'),
+  //         content: const SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               Text(
+  //                 'Cette action est irréversible et le message disparaîtra de la liste de discussion.',
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: const Text('Annuler'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //           TextButton(
+  //             child: const Text(
+  //               'Supprimer',
+  //               style: TextStyle(color: Colors.red),
+  //             ),
+  //             onPressed: () {
+  //               ref.read(aiChatProvider.notifier).deleteMessage(messageIndex);
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +146,9 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ChatBubble(
-                          onLongPress: message.isUser == true
-                              ? () => _showDialog(i)
-                              : null,
+                          // onLongPress: message.isUser == true
+                          //     ? () => _showDialog(i)
+                          //     : null,
                           isUser: message.isUser,
                           text: message.text,
                           time: message.timestamp,
