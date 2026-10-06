@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/geo/user_position.dart';
@@ -51,6 +52,7 @@ class PharmaciesPage extends ConsumerWidget {
                 return PharmacyCard(
                   pharmacy: pharmacy,
                   distanceKm: distanceTo(pharmacy),
+                  onTap: () => context.push('/pharmacies/${pharmacy.id}'),
                 );
               },
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 
 import '../../../../core/geo/user_position.dart';
 import '../../../../core/providers/firebase_providers.dart';
@@ -34,4 +35,10 @@ final FutureProvider<List<Pharmacy>> pharmaciesProvider =
         getPharmaciesUseCaseProvider,
       );
       return getPharmacies(from: ref.watch(userPositionProvider));
+    });
+
+/// Une pharmacie précise. `family` crée un provider par identifiant.
+final FutureProviderFamily<Pharmacy, String> pharmacyByIdProvider =
+    FutureProvider.family<Pharmacy, String>((Ref ref, String id) {
+      return ref.watch(pharmacyRepositoryProvider).getPharmacyById(id);
     });
