@@ -6,9 +6,8 @@ import '../widgets/chat_bubble.dart';
 import '../widgets/pharmacie_card.dart';
 
 class AiChatPage extends ConsumerStatefulWidget {
-  final bool embedded;
 
-  const AiChatPage({super.key, this.embedded = false});
+  const AiChatPage({super.key});
 
   @override
   ConsumerState<AiChatPage> createState() => _AiChatPageState();
@@ -87,11 +86,11 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     final aiChat = ref.watch(aiChatProvider);
     final colorScheme = Theme.of(context).colorScheme;
     ref.listen(aiChatProvider, (previous, next) {
-      // if (next.errorMessage != null &&
-      //     next.errorMessage != previous?.errorMessage) {
-      //   ScaffoldMessenger.of(context)
-      //       .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
-      // }
+      if (next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      }
 
       if (previous?.messages.length != next.messages.length ||
           (previous?.isLoading == true && next.isLoading == false)) {
@@ -100,9 +99,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     });
 
     return Scaffold(
-      appBar: widget.embedded
-          ? null
-          : AppBar(title: const Text("Find Pharma AI")),
+      appBar: AppBar(title: const Text("Find Pharma AI")),
       body: SafeArea(
         child: Column(
           children: [
