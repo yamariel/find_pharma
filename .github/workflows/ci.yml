@@ -1,0 +1,46 @@
+name: CI
+
+# Se déclenche sur les PR vers dev et main, et sur les pushes directs
+# vers ces deux branches — pour couvrir aussi les merges.
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+# Annule un run en cours si un nouveau commit arrive sur la même branche :
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: Analyse statique et tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v5
+
+      - name: Installer Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # Version figée : elle doit correspondre à celle du pubspec.lock,
+          # qui exige Flutter >= 3.47.0. À bumper volontairement, en équipe.
+          flutter-version: '3.47.5'
+          channel: stable
+          cache: true
+
+      - name: Créer un .env vide
+        # Le pubspec déclare .env comme asset, mais le fichier est gitignoré
+        # car il contient des clés. Sans lui, le build échoue.
+        run: touch .env
+
+      - name: Récupérer les dépendances
+        run: flutter pub get
+
+      - name: Analyse statique
+        run: flutter analyze
+
+      - name: Tests
+        run: flutter test
