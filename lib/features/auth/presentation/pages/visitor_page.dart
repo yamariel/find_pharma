@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../map/presentation/pages/map_page.dart';
 import '../../../medicines/presentation/pages/search_medicines_page.dart';
+import '../../../pharmacies/presentation/pages/on_duty_pharmacies_page.dart';
 
 class VisitorHomePage extends StatefulWidget {
   const VisitorHomePage({super.key});
@@ -18,7 +19,7 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
   late final List<Widget> pages = [
     const MapPage(), // 0 : Carte
     const SearchMedicinesPage(), // 1 : Médicaments
-    _gardePage(), // 2 : Garde
+    const OnDutyPharmaciesPage(), // 2 : Garde
     _assistantPage(), // 3 : Assistant — réservé aux comptes
     _accountPage(), // 4 : Profil — connexion et inscription
   ];
@@ -140,9 +141,6 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
     );
   }
 
-  Widget _gardePage() {
-    return const Center(child: Text('Pharmacies de garde'));
-  }
 
   Widget _assistantPage() {
     return const Center(
