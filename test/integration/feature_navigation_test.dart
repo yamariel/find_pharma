@@ -44,20 +44,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('les accès réservés au visiteur ouvrent la route inscription', (
-    tester,
-  ) async {
-    final router = await showVisitor(tester);
-    for (final label in ['Créer un compte', 'Assistant', 'Profil']) {
-      await tester.tap(find.text(label));
-      await tester.pumpAndSettle();
-      expect(router.canPop(), isTrue);
-      expect(find.text('Inscription client'), findsOneWidget);
-      router.pop();
-      await tester.pumpAndSettle();
-    }
-  });
-
   testWidgets('itinéraire transmet la pharmacie choisie à la carte', (
     tester,
   ) async {

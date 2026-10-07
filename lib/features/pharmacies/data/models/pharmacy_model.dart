@@ -18,6 +18,8 @@ abstract final class PharmacyFields {
   static const String address = 'address';
   static const String secondaryPhone = 'secondaryPhone';
   static const String openingHours = 'openingHours';
+  static const String onDutyFrom = 'onDutyFrom';
+  static const String onDutyUntil = 'onDutyUntil';
   static const String verifiedByPharmacy = 'verifiedByPharmacy';
   static const String updatedAt = 'updatedAt';
 }
@@ -39,6 +41,8 @@ class PharmacyModel extends Pharmacy {
     super.address,
     super.secondaryPhone,
     super.openingHours,
+    super.onDutyFrom,
+    super.onDutyUntil,
     super.verifiedByPharmacy,
     super.updatedAt,
   });
@@ -66,6 +70,8 @@ class PharmacyModel extends Pharmacy {
       openingHours: OpeningHoursMapper.fromFirestore(
         data[PharmacyFields.openingHours],
       ),
+      onDutyFrom: _optionalDateTime(data, PharmacyFields.onDutyFrom),
+      onDutyUntil: _optionalDateTime(data, PharmacyFields.onDutyUntil),
       verifiedByPharmacy: _optionalBool(data, PharmacyFields.verifiedByPharmacy),
       updatedAt: _optionalDateTime(data, PharmacyFields.updatedAt),
     );
@@ -84,6 +90,8 @@ class PharmacyModel extends Pharmacy {
       address: pharmacy.address,
       secondaryPhone: pharmacy.secondaryPhone,
       openingHours: pharmacy.openingHours,
+      onDutyFrom: pharmacy.onDutyFrom,
+      onDutyUntil: pharmacy.onDutyUntil,
       verifiedByPharmacy: pharmacy.verifiedByPharmacy,
       updatedAt: pharmacy.updatedAt,
     );
@@ -98,6 +106,8 @@ class PharmacyModel extends Pharmacy {
   /// incohérentes, et tout l'indicateur de fraîcheur deviendrait faux.
   Map<String, dynamic> toFirestore() {
     final OpeningHours? hours = openingHours;
+    final DateTime? dutyFrom = onDutyFrom;
+    final DateTime? dutyUntil = onDutyUntil;
     return <String, dynamic>{
       PharmacyFields.name: name,
       PharmacyFields.district: district,
@@ -108,6 +118,10 @@ class PharmacyModel extends Pharmacy {
       PharmacyFields.secondaryPhone: secondaryPhone,
       if (hours != null)
         PharmacyFields.openingHours: OpeningHoursMapper.toFirestore(hours),
+      if (dutyFrom != null)
+        PharmacyFields.onDutyFrom: Timestamp.fromDate(dutyFrom),
+      if (dutyUntil != null)
+        PharmacyFields.onDutyUntil: Timestamp.fromDate(dutyUntil),
       PharmacyFields.verifiedByPharmacy: verifiedByPharmacy,
       PharmacyFields.updatedAt: FieldValue.serverTimestamp(),
     };
