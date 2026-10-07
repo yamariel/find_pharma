@@ -44,17 +44,22 @@ Kinshasa ; ce centre n’est pas présenté comme une position mesurée.
   l’erreur et les résultats vides. Aucune erreur Firebase ne déclenche la démo.
 - `locationService`, `routingService` et `tileProvider` sont injectables pour les tests.
 
-La route `/map` de `dev` conserve actuellement son écran provisoire
-`lib/features/map/presentation/pages/map_page.dart`. Son branchement aux résultats
-métier n’est pas réalisé par cette résolution de conflits. L’équipe devra y
-instancier `PharmacyMapScreen`, adapter les entités existantes en `MapPharmacy`
-et connecter le callback de détail. Aucun second repository Firebase n’a été créé.
+La route `/map` et l’onglet carte client utilisent désormais `PharmacyMapScreen`
+via `lib/features/map/presentation/pages/map_page.dart`. Le provider de carte
+adapte le catalogue métier existant en `MapPharmacy`, avec chargement, erreur
+et nouvelle tentative. Le paramètre `pharmacyId` permet à l’assistant de
+présélectionner une pharmacie, même si le catalogue arrive ensuite. L’ouverture,
+la présence des vendeurs et le stock restent inconnus faute de données associées.
+Le callback de détail reste absent : `PharmacyDetailPage` est encore vide sur dev.
+Aucun second repository Firebase n’a été créé.
 
 Le backend doit fournir une requête bornée géographiquement (zone/rayon, limite,
 pagination), des coordonnées valides et une projection publique des pharmacies,
 avec les résultats de disponibilité/prix associés au médicament demandé.
 Réutiliser les repositories et la logique d’ouverture de `dev` pour cette adaptation.
-Ne pas charger toute la collection ni exposer coûts d’achat ou données clients.
+Le repository existant lit actuellement toute la collection : la requête bornée
+reste à mettre en place avant un déploiement à grande échelle. L’intégration
+ne modifie pas ce contrat métier et n’expose ni coûts d’achat ni données clients.
 Aucune modification des règles Firebase n’est requise par cette fusion.
 
 ## Configuration

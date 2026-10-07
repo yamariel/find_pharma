@@ -1,5 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/firebase_providers.dart';
+
+export '../../../../core/providers/firebase_providers.dart' show firestoreProvider;
 
 import '../../data/datasources/medicine_remote_data_source.dart';
 import '../../data/repositories/medicine_repository_impl.dart';
@@ -11,10 +13,6 @@ import '../../domain/usecases/adjust_stock_usecase.dart';
 import '../../domain/usecases/get_cheaper_alternative_usecase.dart';
 import '../../domain/usecases/search_medicines_usecase.dart';
 import '../../domain/usecases/watch_pharmacies_with_stock_usecase.dart';
-
-final firestoreProvider = Provider<FirebaseFirestore>(
-  (ref) => FirebaseFirestore.instance,
-);
 
 final medicineDatasourceProvider = Provider(
   (ref) => MedicineRemoteDataSource(ref.watch(firestoreProvider)),

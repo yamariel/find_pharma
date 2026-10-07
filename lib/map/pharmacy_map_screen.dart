@@ -109,6 +109,10 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
     }
     if (oldWidget.selectedPharmacyId != widget.selectedPharmacyId) {
       _state.select(widget.selectedPharmacyId);
+    } else if ((oldWidget.loading || oldWidget.errorMessage != null) &&
+        !widget.loading && widget.errorMessage == null) {
+      // La destination du lien peut précéder le chargement des pharmacies.
+      _state.select(widget.selectedPharmacyId);
     }
   }
 

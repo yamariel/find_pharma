@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class VisitorClientNavbar extends StatelessWidget {
   final int currentIndex;
@@ -22,7 +23,7 @@ class VisitorClientNavbar extends StatelessWidget {
       onTap: (index) {
         if (isVisitor && (index == 3 || index == 4)) {
           // Assistant ou Profil → visiteur → redirection
-          Navigator.pushNamed(context, '/createAccount');
+          context.push('/signup/client');
           return;
         }
         onTap(index);
