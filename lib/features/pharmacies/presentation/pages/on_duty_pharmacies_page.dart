@@ -48,9 +48,7 @@ class OnDutyPharmaciesPage extends ConsumerWidget {
                 return const _Message(
                   icon: Icons.nightlight_outlined,
                   text:
-                      'Aucune pharmacie de garde déclarée en ce moment.\n'
-                      'Les officines publient leur tour de garde depuis leur '
-                      'espace.',
+                      'Aucune pharmacie de garde déclarée en ce moment.',
                 );
               }
               return RefreshIndicator(
