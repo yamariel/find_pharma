@@ -116,18 +116,6 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
               ),
               child: const Text('Créer un compte'),
             ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: () => context.push('/signup-pharmacy'),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                side: const BorderSide(color: Colors.green),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('Inscription pharmacie'),
-            ),
             const Spacer(),
             const Text(
               'Accédez à plus de fonctionnalités en créant un compte.',
