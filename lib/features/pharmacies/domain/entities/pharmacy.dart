@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:find_pharma/features/pharmacies/domain/entities/opening_hours.dart';
+
 /// Entité métier représentant une pharmacie.
 ///
 /// Dart pur : aucun import Flutter, aucun import Firestore.
@@ -18,6 +20,7 @@ class Pharmacy {
     required this.email,
     this.address,
     this.secondaryPhone,
+    this.openingHours,
     this.verifiedByPharmacy = false,
     this.updatedAt,
   });
@@ -38,6 +41,9 @@ class Pharmacy {
   final String? email;
   final String? address;
   final String? secondaryPhone;
+
+  /// Horaires habituels. `null` = inconnus, ce qui n'est pas « fermée ».
+  final OpeningHours? openingHours;
 
   /// Passe à `true` quand l'officine a validé elle-même sa fiche.
   final bool verifiedByPharmacy;
@@ -77,6 +83,7 @@ class Pharmacy {
     String? phone,
     String? address,
     String? secondaryPhone,
+    OpeningHours? openingHours,
     bool? verifiedByPharmacy,
     DateTime? updatedAt,
     String? email,
@@ -91,6 +98,7 @@ class Pharmacy {
       email: email ?? this.email,
       address: address ?? this.address,
       secondaryPhone: secondaryPhone ?? this.secondaryPhone,
+      openingHours: openingHours ?? this.openingHours,
       verifiedByPharmacy: verifiedByPharmacy ?? this.verifiedByPharmacy,
       updatedAt: updatedAt ?? this.updatedAt,
     );
