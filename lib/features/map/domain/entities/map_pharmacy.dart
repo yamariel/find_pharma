@@ -1,4 +1,4 @@
-import 'package:find_pharma/map/models/map_pharmacy.dart';
+import 'package:find_pharma/features/map/domain/entities/coordinates.dart';
 import 'package:latlong2/latlong.dart';
 
 /// Statut d'ouverture d'une pharmacie sur la carte.

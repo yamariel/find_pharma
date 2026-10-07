@@ -6,11 +6,7 @@ import 'get_user_location_usecase.dart';
 
 /// Calcule l'itinéraire automobile entre l'utilisateur et une destination.
 class GetRoadRouteUseCase {
-  const GetRoadRouteUseCase({
-    required GetUserLocationUseCase getUserLocation,
-    required RoutingRepository routingRepository,
-  }) : _getUserLocation = getUserLocation,
-       _routingRepository = routingRepository;
+  const GetRoadRouteUseCase(this._getUserLocation, this._routingRepository);
 
   final GetUserLocationUseCase _getUserLocation;
   final RoutingRepository _routingRepository;

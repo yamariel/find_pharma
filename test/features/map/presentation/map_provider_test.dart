@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
 import 'package:find_pharma/features/map/presentation/providers/map_provider.dart';
 import 'package:find_pharma/features/pharmacies/domain/entities/pharmacy.dart';
 import 'package:find_pharma/features/pharmacies/presentation/providers/pharmacy_provider.dart';
-import 'package:find_pharma/map/models/map_pharmacy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

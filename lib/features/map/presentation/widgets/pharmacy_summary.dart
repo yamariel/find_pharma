@@ -1,7 +1,7 @@
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../models/map_pharmacy.dart';
 
 String openingLabel(OpeningStatus status) => switch (status) {
   OpeningStatus.open => 'Ouverte',

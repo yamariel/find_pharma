@@ -1,7 +1,7 @@
+import 'package:find_pharma/features/map/presentation/widgets/pharmacy_map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../map/pharmacy_map_screen.dart';
 import '../../../pharmacies/presentation/providers/pharmacy_provider.dart';
 import '../providers/map_provider.dart';
 
@@ -13,7 +13,7 @@ class MapPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pharmacies = ref.watch(mapProvider);
-    return PharmacyMapScreen(
+    return PharmacyMapView(
       pharmacies: pharmacies.asData?.value ?? const [],
       selectedPharmacyId: selectedPharmacyId,
       loading: pharmacies.isLoading,

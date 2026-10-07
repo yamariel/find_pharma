@@ -1,13 +1,15 @@
 import 'dart:async';
 
+import 'package:find_pharma/core/errors/failures.dart';
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
+import 'package:find_pharma/features/map/domain/entities/road_route.dart';
+import 'package:find_pharma/features/map/domain/repositories/location_repository.dart';
+import 'package:find_pharma/features/map/domain/repositories/routing_repository.dart';
+import 'package:find_pharma/features/map/presentation/controllers/pharmacy_map_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:find_pharma/map/map_controller.dart';
-import 'package:find_pharma/map/models/map_pharmacy.dart';
-import 'package:find_pharma/map/services/location_service.dart';
-import 'package:find_pharma/map/services/routing_service.dart';
 
-class FakeLocation implements LocationService {
+class FakeLocation implements LocationRepository {
   LocationFailure? failure;
   int calls = 0;
   Completer<LatLng>? pending;
@@ -22,7 +24,7 @@ class FakeLocation implements LocationService {
   Future<bool> openSettings({required bool locationSettings}) async => false;
 }
 
-class FakeRouting implements RoutingService {
+class FakeRouting implements RoutingRepository {
   final requests = <Completer<RoadRoute>>[];
   @override
   Future<RoadRoute> route(LatLng origin, LatLng destination) {

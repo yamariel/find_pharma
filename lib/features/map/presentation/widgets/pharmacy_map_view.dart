@@ -4,16 +4,20 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'map_config.dart';
-import 'map_controller.dart';
-import 'models/map_pharmacy.dart';
-import 'services/location_service.dart';
-import 'services/routing_service.dart';
-import 'widgets/pharmacy_markers.dart';
-import 'widgets/pharmacy_summary.dart';
+import '../../../../core/config/map_config.dart';
+import '../../../../core/errors/failures.dart';
+import '../../data/datasources/geolocator_location_data_source.dart';
+import '../../data/datasources/osrm_routing_data_source.dart';
+import '../../domain/entities/map_pharmacy.dart';
+import '../../domain/entities/road_route.dart';
+import '../../domain/repositories/location_repository.dart';
+import '../../domain/repositories/routing_repository.dart';
+import '../controllers/pharmacy_map_controller.dart';
+import 'pharmacy_markers.dart';
+import 'pharmacy_summary.dart';
 
-class PharmacyMapScreen extends StatefulWidget {
-  const PharmacyMapScreen({
+class PharmacyMapView extends StatefulWidget {
+  const PharmacyMapView({
     super.key,
     required this.pharmacies,
     this.medicine,
@@ -41,21 +45,21 @@ class PharmacyMapScreen extends StatefulWidget {
   final String? errorMessage;
   final bool isDemo;
   final MapConfig config;
-  final LocationService? locationService;
-  final RoutingService? routingService;
+  final LocationRepository? locationService;
+  final RoutingRepository? routingService;
 
   /// Optional for tests/custom tile providers; FlutterMap owns its lifecycle.
   final TileProvider? tileProvider;
 
   @override
-  State<PharmacyMapScreen> createState() => _PharmacyMapScreenState();
+  State<PharmacyMapView> createState() => _PharmacyMapViewState();
 }
 
-class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
+class _PharmacyMapViewState extends State<PharmacyMapView> {
   static const kinshasa = LatLng(-4.325, 15.322);
   final _camera = MapController();
   late PharmacyMapController _state;
-  late RoutingService _routingService;
+  late RoutingRepository _routingService;
   bool _ownsRouting = false;
   bool _ready = false;
   bool _tileError = false;
@@ -72,12 +76,12 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
     _ownsRouting = widget.routingService == null;
     _routingService =
         widget.routingService ??
-        OsrmRoutingService(
+        OsrmRoutingDataSource(
           baseUrl: widget.config.routingUrl,
           userAgent: widget.config.userAgent,
         );
     _state = PharmacyMapController(
-      locationService: widget.locationService ?? DeviceLocationService(),
+      locationService: widget.locationService ?? GeolocatorLocationDataSource(),
       routingService: _routingService,
     );
     _state.setPharmacies(_visibleResults);
@@ -91,7 +95,7 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
       : widget.pharmacies;
 
   @override
-  void didUpdateWidget(covariant PharmacyMapScreen oldWidget) {
+  void didUpdateWidget(covariant PharmacyMapView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.routingService != widget.routingService ||
         oldWidget.locationService != widget.locationService ||

@@ -1,9 +1,12 @@
+import 'package:find_pharma/core/errors/failures.dart';
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
+import 'package:find_pharma/features/map/domain/entities/road_route.dart';
+import 'package:find_pharma/features/map/domain/repositories/location_repository.dart';
+import 'package:find_pharma/features/map/domain/repositories/routing_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'models/map_pharmacy.dart';
-import 'services/location_service.dart';
-import 'services/routing_service.dart';
+
 
 /// Screen-scoped state. No database writes, position history or subscriptions.
 class PharmacyMapController extends ChangeNotifier {
@@ -11,8 +14,8 @@ class PharmacyMapController extends ChangeNotifier {
     required this.locationService,
     required this.routingService,
   });
-  final LocationService locationService;
-  final RoutingService routingService;
+  final LocationRepository locationService;
+  final RoutingRepository routingService;
   List<MapPharmacy> _pharmacies = const [];
   List<MapPharmacy> get pharmacies => _pharmacies;
   MapPharmacy? selected;
@@ -81,7 +84,7 @@ class PharmacyMapController extends ChangeNotifier {
       return null;
     } catch (_) {
       if (!_disposed) {
-        locationFailure = const LocationFailure(LocationProblem.unavailable);
+        locationFailure = LocationFailure(LocationProblem.unavailable);
         position = null;
       }
       return null;

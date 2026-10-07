@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:find_pharma/core/errors/failures.dart';
+import 'package:find_pharma/features/map/data/datasources/osrm_routing_data_source.dart';
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:find_pharma/map/services/routing_service.dart';
-import 'package:find_pharma/map/models/map_pharmacy.dart';
 
 Map<String, dynamic> response({
   Object? coordinates,
@@ -36,7 +37,7 @@ void main() {
   test(
     'request longitude/latitude and GeoJSON decoded as latitude/longitude',
     () async {
-      final service = OsrmRoutingService(
+      final service = OsrmRoutingDataSource(
         baseUrl: 'https://routing.example/proxy/',
         client: MockClient((request) async {
           expect(
@@ -98,7 +99,7 @@ void main() {
   ]) {
     test('rejects malformed/no route response ${body.toString()}', () {
       expect(
-        () => OsrmRoutingService.parseResponse(body),
+        () => OsrmRoutingDataSource.parseResponse(body),
         throwsA(isA<RoutingFailure>()),
       );
     });
@@ -113,7 +114,7 @@ void main() {
         MockClient((_) async => throw http.ClientException('private url')),
         MockClient((_) => Completer<http.Response>().future),
       ]) {
-        final service = OsrmRoutingService(
+        final service = OsrmRoutingDataSource(
           baseUrl: 'https://routing.example',
           client: client,
           timeout: const Duration(milliseconds: 10),
@@ -144,7 +145,7 @@ void main() {
       );
     }
     expect(
-      () => OsrmRoutingService(baseUrl: 'http://routing.example'),
+      () => OsrmRoutingDataSource(baseUrl: 'http://routing.example'),
       throwsArgumentError,
     );
     final p = MapPharmacy(id: 'p', name: 'P', latitude: -4, longitude: 15);
@@ -160,11 +161,11 @@ void main() {
       expect(request.headers['User-Agent'], 'org.findpharma.app');
       return http.Response(jsonEncode(response()), 200);
     });
-    final first = OsrmRoutingService(
+    final first = OsrmRoutingDataSource(
       baseUrl: 'https://router.project-osrm.org',
       client: client(),
     );
-    final second = OsrmRoutingService(
+    final second = OsrmRoutingDataSource(
       baseUrl: 'https://router.project-osrm.org',
       client: client(),
     );

@@ -1,6 +1,6 @@
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../map/models/map_pharmacy.dart';
 import '../../../pharmacies/presentation/providers/pharmacy_provider.dart';
 
 /// Adaptation des fiches métier au contrat public du module carte.
