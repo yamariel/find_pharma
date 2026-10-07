@@ -16,6 +16,14 @@ class AiRemoteDataSourceImpl implements AiRemoteDataSource {
   @override
   Future<AiResponseModel> askAi(String prompt) async {
     final apiKey = dotenv.env["RODIUMAI_API_KEY"] ?? '';
+
+    // Clé absente du .env : inutile d'appeler l'API pour récupérer un 401
+    // dont le message s'adresse aux développeurs.
+    if (apiKey.isEmpty) {
+      throw const ServerException(
+        "L'assistant n'est pas disponible : cette installation n'a pas de clé API configurée.",
+      );
+    }
     const systemPrompt = """
 Tu es Find Pharma AI, un assistant d'orientation en santé et en pharmacie. Réponds en français, sauf si l'utilisateur s'exprime dans une autre langue.
 
@@ -73,7 +81,7 @@ Sécurité :
       switch (e.response?.statusCode) {
         case 401:
           throw ServerException(
-            "Non autorisé: Clé API manquante ou invalide. Vérifiez l'en-tête Authorization.",
+            "L'assistant n'est pas disponible : clé API refusée par le service.",
           );
         case 402:
           throw ServerException(
