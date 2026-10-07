@@ -1,15 +1,14 @@
 import 'dart:convert';
 
+import 'package:find_pharma/core/errors/failures.dart';
+import 'package:find_pharma/features/map/domain/entities/map_pharmacy.dart';
+import 'package:find_pharma/features/map/presentation/widgets/pharmacy_map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:find_pharma/map/pharmacy_map_screen.dart';
-import 'package:find_pharma/map/models/map_pharmacy.dart';
-import 'package:find_pharma/map/services/location_service.dart';
-import 'package:find_pharma/map/services/routing_service.dart';
 
-import 'map_controller_test.dart'
-    show FakeLocation, FakeRouting, pharmacies, road;
+import 'pharmacy_map_controller_test.dart';
+
 
 class MemoryTiles extends TileProvider {
   @override
@@ -22,6 +21,31 @@ class MemoryTiles extends TileProvider {
 }
 
 void main() {
+  testWidgets(
+    'destination received before catalogue remains selected after loading',
+    (tester) async {
+      final location = FakeLocation();
+      final routing = FakeRouting();
+      final tiles = MemoryTiles();
+      Widget screen(bool loading) => MaterialApp(
+        home: PharmacyMapView(
+          pharmacies: loading ? [] : pharmacies,
+          loading: loading,
+          selectedPharmacyId: 'a',
+          locationRepository: location,
+          routingRepository: routing,
+          tileProvider: tiles,
+        ),
+      );
+      await tester.pumpWidget(screen(true));
+      await tester.pump();
+      await tester.pumpWidget(screen(false));
+      await tester.pumpAndSettle();
+      expect(find.text('Présence des vendeurs non renseignée'), findsOneWidget);
+      expect(location.calls, 0);
+      expect(tester.takeException(), isNull);
+    },
+  );
   late FakeLocation location;
   late FakeRouting routing;
   setUp(() {
@@ -37,12 +61,12 @@ void main() {
   }) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: PharmacyMapScreen(
+        home: PharmacyMapView(
           pharmacies: data ?? pharmacies,
           medicine: medicine,
           selectedPharmacyId: selectedId,
-          locationService: location,
-          routingService: routing,
+          locationRepository: location,
+          routingRepository: routing,
           tileProvider: MemoryTiles(),
           onViewPharmacy: onView,
         ),
@@ -57,7 +81,7 @@ void main() {
       MapPharmacy? viewed;
       await show(tester, onView: (p) => viewed = p);
       expect(find.byType(FlutterMap), findsOneWidget);
-      expect(find.textContaining('Kinshasa'), findsOneWidget);
+      expect(find.textContaining('Position non disponible'), findsOneWidget);
       expect(location.calls, 0);
       await tester.tap(find.byTooltip('A, Ouverture inconnue'));
       await tester.pumpAndSettle();
@@ -80,7 +104,7 @@ void main() {
     expect(find.byType(PolylineLayer), findsNothing);
   });
   testWidgets('denied position does not hide pharmacies', (tester) async {
-    location.failure = const LocationFailure(LocationProblem.denied);
+    location.failure = LocationFailure(LocationProblem.denied);
     await show(tester);
     await tester.tap(find.byTooltip('Me localiser et recentrer'));
     await tester.pumpAndSettle();

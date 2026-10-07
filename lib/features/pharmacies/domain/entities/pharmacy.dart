@@ -21,6 +21,8 @@ class Pharmacy {
     this.address,
     this.secondaryPhone,
     this.openingHours,
+    this.onDutyFrom,
+    this.onDutyUntil,
     this.verifiedByPharmacy = false,
     this.updatedAt,
   });
@@ -45,10 +47,30 @@ class Pharmacy {
   /// Horaires habituels. `null` = inconnus, ce qui n'est pas « fermée ».
   final OpeningHours? openingHours;
 
+  /// Bornes de la période de garde déclarée par l'officine.
+  ///
+  /// Un intervalle, et non un drapeau : « de garde » qualifie un instant, pas
+  /// une pharmacie. L'intervalle expire de lui-même, donc aucune valeur ne
+  /// reste à nettoyer.
+  final DateTime? onDutyFrom;
+  final DateTime? onDutyUntil;
+
   /// Passe à `true` quand l'officine a validé elle-même sa fiche.
   final bool verifiedByPharmacy;
 
   final DateTime? updatedAt;
+
+  /// `true` si la garde déclarée couvre [instant].
+  ///
+  /// Début inclus, fin exclue : à la seconde où la garde s'achève, la
+  /// pharmacie n'est plus de garde. Une seule borne renseignée ne suffit pas —
+  /// une garde sans fin connue n'est pas une garde.
+  bool isOnDutyAt(DateTime instant) {
+    final DateTime? from = onDutyFrom;
+    final DateTime? until = onDutyUntil;
+    if (from == null || until == null) return false;
+    return !instant.isBefore(from) && instant.isBefore(until);
+  }
 
   /// Distance à vol d'oiseau en kilomètres, depuis un point donné.
   ///
@@ -84,6 +106,8 @@ class Pharmacy {
     String? address,
     String? secondaryPhone,
     OpeningHours? openingHours,
+    DateTime? onDutyFrom,
+    DateTime? onDutyUntil,
     bool? verifiedByPharmacy,
     DateTime? updatedAt,
     String? email,
@@ -99,6 +123,8 @@ class Pharmacy {
       address: address ?? this.address,
       secondaryPhone: secondaryPhone ?? this.secondaryPhone,
       openingHours: openingHours ?? this.openingHours,
+      onDutyFrom: onDutyFrom ?? this.onDutyFrom,
+      onDutyUntil: onDutyUntil ?? this.onDutyUntil,
       verifiedByPharmacy: verifiedByPharmacy ?? this.verifiedByPharmacy,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -117,6 +143,8 @@ class Pharmacy {
         other.email == email &&
         other.address == address &&
         other.secondaryPhone == secondaryPhone &&
+        other.onDutyFrom == onDutyFrom &&
+        other.onDutyUntil == onDutyUntil &&
         other.verifiedByPharmacy == verifiedByPharmacy &&
         other.updatedAt == updatedAt;
   }
@@ -132,6 +160,8 @@ class Pharmacy {
     email,
     address,
     secondaryPhone,
+    onDutyFrom,
+    onDutyUntil,
     verifiedByPharmacy,
     updatedAt,
   );

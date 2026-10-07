@@ -1,10 +1,15 @@
+import 'package:find_pharma/features/map/domain/entities/coordinates.dart';
 import 'package:latlong2/latlong.dart';
 
+/// Statut d'ouverture d'une pharmacie sur la carte.
 enum OpeningStatus { open, closed, unknown }
 
+/// Disponibilité d'un médicament dans une pharmacie.
 enum MedicineAvailability { available, unavailable, unknown }
 
-/// Public projection only. Coordinates are WGS84, latitude then longitude.
+/// Projection d'une pharmacie destinée à l'affichage cartographique.
+///
+/// Coordonnées WGS84, latitude puis longitude.
 class MapPharmacy {
   MapPharmacy({
     required this.id,
@@ -32,29 +37,21 @@ class MapPharmacy {
   final String? address;
   final OpeningStatus opening;
 
-  /// null = presence unknown; [] = no seller declared present.
+  /// `null` = présence inconnue ; `[]` = aucun vendeur déclaré présent.
   final List<String>? presentSellerNames;
   final MedicineAvailability availability;
 
-  /// Public selling price formatted by the business module, including currency.
-  /// null means unknown; do not derive it from costs or stock data.
+  /// Prix public formaté par le module métier, devise comprise.
+  /// `null` = inconnu ; ne jamais le déduire des coûts ou du stock.
   final String? priceLabel;
+
   LatLng get point => LatLng(latitude, longitude);
 }
 
+/// Médicament recherché, transmis à la carte pour contextualiser l'affichage.
 class MedicineContext {
   const MedicineContext({required this.id, required this.label});
+
   final String id;
   final String label;
-}
-
-void validateCoordinates(double latitude, double longitude) {
-  if (!latitude.isFinite ||
-      !longitude.isFinite ||
-      latitude < -90 ||
-      latitude > 90 ||
-      longitude < -180 ||
-      longitude > 180) {
-    throw ArgumentError('Coordonnées WGS84 invalides.');
-  }
 }

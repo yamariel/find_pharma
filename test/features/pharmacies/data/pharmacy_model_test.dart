@@ -228,4 +228,81 @@ void main() {
       expect(written[PharmacyFields.verifiedByPharmacy], isFalse);
     });
   });
+
+    group('PharmacyModel : periode de garde', () {
+    final DateTime dutyStart = DateTime.utc(2026, 10, 6, 8);
+    final DateTime dutyEnd = DateTime.utc(2026, 10, 12, 8);
+
+    Map<String, dynamic> dataWithDuty() => completeData()
+      ..[PharmacyFields.onDutyFrom] = Timestamp.fromDate(dutyStart)
+      ..[PharmacyFields.onDutyUntil] = Timestamp.fromDate(dutyEnd);
+
+    test('lit les deux bornes depuis Firestore', () {
+      final PharmacyModel model = PharmacyModel.fromFirestore(
+        dataWithDuty(),
+        documentId,
+      );
+
+      expect(model.onDutyFrom, isNotNull);
+      expect(model.onDutyUntil, isNotNull);
+      expect(model.onDutyFrom!.isAtSameMomentAs(dutyStart), isTrue);
+      expect(model.onDutyUntil!.isAtSameMomentAs(dutyEnd), isTrue);
+    });
+
+    test('un document sans garde donne deux bornes nulles', () {
+      final PharmacyModel model = PharmacyModel.fromFirestore(
+        minimalData(),
+        documentId,
+      );
+
+      expect(model.onDutyFrom, isNull);
+      expect(model.onDutyUntil, isNull);
+      expect(model.isOnDutyAt(dutyStart), isFalse);
+    });
+
+    test('ecrit les bornes en Timestamp', () {
+      final PharmacyModel model = PharmacyModel.fromFirestore(
+        dataWithDuty(),
+        documentId,
+      );
+
+      final Map<String, dynamic> written = model.toFirestore();
+
+      expect(written[PharmacyFields.onDutyFrom], isA<Timestamp>());
+      expect(
+        (written[PharmacyFields.onDutyFrom] as Timestamp)
+            .toDate()
+            .isAtSameMomentAs(dutyStart),
+        isTrue,
+      );
+    });
+
+    test('n ecrit aucune borne quand la pharmacie n est pas de garde', () {
+      final PharmacyModel model = PharmacyModel.fromFirestore(
+        minimalData(),
+        documentId,
+      );
+
+      final Map<String, dynamic> written = model.toFirestore();
+
+      expect(written.containsKey(PharmacyFields.onDutyFrom), isFalse);
+      expect(written.containsKey(PharmacyFields.onDutyUntil), isFalse);
+    });
+
+    test('un aller-retour conserve les bornes', () {
+      final PharmacyModel original = PharmacyModel.fromFirestore(
+        dataWithDuty(),
+        documentId,
+      );
+
+      final PharmacyModel reread = PharmacyModel.fromFirestore(
+        original.toFirestore(),
+        documentId,
+      );
+
+      expect(reread.onDutyFrom!.isAtSameMomentAs(dutyStart), isTrue);
+      expect(reread.onDutyUntil!.isAtSameMomentAs(dutyEnd), isTrue);
+      expect(reread.isOnDutyAt(DateTime.utc(2026, 10, 7, 20)), isTrue);
+    });
+  });
 }

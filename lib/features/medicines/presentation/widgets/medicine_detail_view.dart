@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:find_pharma/core/utils/medicine_ui.dart';
+import '../../../../core/utils/pharmacy_actions.dart';
+import '../../../pharmacies/presentation/providers/pharmacy_provider.dart';
 
 import '../../domain/entities/medicine.dart';
 import '../providers/medicine_provider.dart';
@@ -21,6 +23,8 @@ class MedicineDetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final stock = ref.watch(pharmaciesWithStockProvider(medicine.id));
     final alternatives = ref.watch(genericAlternativesProvider(medicine));
+    final pharmacies = ref.watch(pharmaciesProvider).asData?.value ?? const [];
+    final phones = {for (final pharmacy in pharmacies) pharmacy.id: pharmacy.phone};
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
@@ -98,7 +102,13 @@ class MedicineDetailView extends ConsumerWidget {
             return Column(
               children: [
                 for (var i = 0; i < sorted.length; i++)
-                  AvailabilityTile(item: sorted[i], highlight: i == 0),
+                  AvailabilityTile(
+                    item: sorted[i],
+                    highlight: i == 0,
+                    onCall: (phones[sorted[i].pharmacyId]?.trim().isEmpty ?? true)
+                        ? null
+                        : () => callPharmacy(context, phones[sorted[i].pharmacyId]!),
+                  ),
               ],
             );
           },

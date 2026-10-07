@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:find_pharma/core/errors/failures.dart';
+import 'package:find_pharma/features/map/data/datasources/geolocator_location_data_source.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:find_pharma/map/services/location_service.dart';
 
 class LocationPlatformFake extends GeolocatorPlatform {
   bool enabled = true;
@@ -47,7 +48,7 @@ class LocationPlatformFake extends GeolocatorPlatform {
 void main() {
   late GeolocatorPlatform original;
   late LocationPlatformFake platform;
-  final service = DeviceLocationService();
+  final service = GeolocatorLocationDataSource();
   setUp(() {
     original = GeolocatorPlatform.instance;
     platform = LocationPlatformFake();

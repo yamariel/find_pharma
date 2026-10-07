@@ -4,16 +4,18 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'map_config.dart';
-import 'map_controller.dart';
-import 'models/map_pharmacy.dart';
-import 'services/location_service.dart';
-import 'services/routing_service.dart';
-import 'widgets/pharmacy_markers.dart';
-import 'widgets/pharmacy_summary.dart';
+import '../../../../core/config/map_config.dart';
+import '../../../../core/errors/failures.dart';
+import '../../domain/entities/map_pharmacy.dart';
+import '../../domain/entities/road_route.dart';
+import '../../domain/repositories/location_repository.dart';
+import '../../domain/repositories/routing_repository.dart';
+import '../controllers/pharmacy_map_controller.dart';
+import 'pharmacy_markers.dart';
+import 'pharmacy_summary.dart';
 
-class PharmacyMapScreen extends StatefulWidget {
-  const PharmacyMapScreen({
+class PharmacyMapView extends StatefulWidget {
+  const PharmacyMapView({
     super.key,
     required this.pharmacies,
     this.medicine,
@@ -25,8 +27,8 @@ class PharmacyMapScreen extends StatefulWidget {
     this.errorMessage,
     this.isDemo = false,
     this.config = const MapConfig(),
-    this.locationService,
-    this.routingService,
+    required this.locationRepository,
+    required this.routingRepository,
     this.tileProvider,
   });
   final List<MapPharmacy> pharmacies;
@@ -41,22 +43,20 @@ class PharmacyMapScreen extends StatefulWidget {
   final String? errorMessage;
   final bool isDemo;
   final MapConfig config;
-  final LocationService? locationService;
-  final RoutingService? routingService;
+  final LocationRepository locationRepository;
+  final RoutingRepository routingRepository;
 
   /// Optional for tests/custom tile providers; FlutterMap owns its lifecycle.
   final TileProvider? tileProvider;
 
   @override
-  State<PharmacyMapScreen> createState() => _PharmacyMapScreenState();
+  State<PharmacyMapView> createState() => _PharmacyMapViewState();
 }
 
-class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
-  static const kinshasa = LatLng(-4.325, 15.322);
+class _PharmacyMapViewState extends State<PharmacyMapView> {
   final _camera = MapController();
   late PharmacyMapController _state;
-  late RoutingService _routingService;
-  bool _ownsRouting = false;
+  late RoutingRepository _routingRepository;
   bool _ready = false;
   bool _tileError = false;
   int _tileRevision = 0;
@@ -69,16 +69,11 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
   }
 
   void _createState() {
-    _ownsRouting = widget.routingService == null;
-    _routingService =
-        widget.routingService ??
-        OsrmRoutingService(
-          baseUrl: widget.config.routingUrl,
-          userAgent: widget.config.userAgent,
-        );
+    _routingRepository =
+        widget.routingRepository;
     _state = PharmacyMapController(
-      locationService: widget.locationService ?? DeviceLocationService(),
-      routingService: _routingService,
+      locationRepository: widget.locationRepository,
+      routingRepository: _routingRepository,
     );
     _state.setPharmacies(_visibleResults);
     _state.select(widget.selectedPharmacyId);
@@ -91,10 +86,10 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
       : widget.pharmacies;
 
   @override
-  void didUpdateWidget(covariant PharmacyMapScreen oldWidget) {
+  void didUpdateWidget(covariant PharmacyMapView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.routingService != widget.routingService ||
-        oldWidget.locationService != widget.locationService ||
+    if (oldWidget.routingRepository != widget.routingRepository ||
+        oldWidget.locationRepository != widget.locationRepository ||
         oldWidget.config.routingUrl != widget.config.routingUrl) {
       _disposeState();
       _lastFitted = null;
@@ -108,6 +103,10 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
       if (_ready && _visibleResults.isNotEmpty) _fitResults();
     }
     if (oldWidget.selectedPharmacyId != widget.selectedPharmacyId) {
+      _state.select(widget.selectedPharmacyId);
+    } else if ((oldWidget.loading || oldWidget.errorMessage != null) &&
+        !widget.loading && widget.errorMessage == null) {
+      // La destination du lien peut précéder le chargement des pharmacies.
       _state.select(widget.selectedPharmacyId);
     }
   }
@@ -207,7 +206,7 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
   }
 
   Future<void> _settings() async {
-    final opened = await _state.locationService.openSettings(
+    final opened = await _state.locationRepository.openSettings(
       locationSettings:
           _state.locationFailure?.problem == LocationProblem.disabled,
     );
@@ -284,7 +283,7 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
                         _notice('Recherche : ${widget.medicine!.label}'),
                       if (_state.position == null)
                         _notice(
-                          'Sans position client • vue initiale sur Kinshasa',
+                          'Position non disponible • itinéraire indisponible',
                         ),
                       if (widget.loading)
                         const LinearProgressIndicator(
@@ -341,8 +340,11 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
                     FlutterMap(
                       mapController: _camera,
                       options: MapOptions(
-                        initialCenter: kinshasa,
-                        initialZoom: 12,
+                        initialCenter: LatLng(
+                          widget.config.fallbackLatitude,
+                          widget.config.fallbackLongitude,
+                        ),
+                        initialZoom: widget.config.fallbackZoom,
                         minZoom: 3,
                         maxZoom: 19,
                         onMapReady: () {
@@ -508,7 +510,6 @@ class _PharmacyMapScreenState extends State<PharmacyMapScreen> {
   void _disposeState() {
     _state.removeListener(_changed);
     _state.dispose();
-    if (_ownsRouting) _routingService.dispose();
   }
 
   @override
