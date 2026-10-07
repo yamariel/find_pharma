@@ -33,9 +33,6 @@ class _VisitorHomePageState extends State<VisitorHomePage> {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
         onTap: (i) {
           // Visiteur : l'assistant demande un compte.
           if (i == 3) {

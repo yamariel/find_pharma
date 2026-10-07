@@ -38,9 +38,6 @@ class _ClientHomePageState extends ConsumerState<ClientHomePage> {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
         onTap: (i) => setState(() => currentIndex = i),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Carte'),
