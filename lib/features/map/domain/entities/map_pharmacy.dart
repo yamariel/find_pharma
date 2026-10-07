@@ -1,3 +1,4 @@
+import 'package:find_pharma/map/models/map_pharmacy.dart';
 import 'package:latlong2/latlong.dart';
 
 /// Statut d'ouverture d'une pharmacie sur la carte.
@@ -53,16 +54,4 @@ class MedicineContext {
 
   final String id;
   final String label;
-}
-
-/// Lève une [ArgumentError] si les coordonnées ne sont pas des WGS84 valides.
-void validateCoordinates(double latitude, double longitude) {
-  if (!latitude.isFinite ||
-      !longitude.isFinite ||
-      latitude < -90 ||
-      latitude > 90 ||
-      longitude < -180 ||
-      longitude > 180) {
-    throw ArgumentError('Coordonnées WGS84 invalides.');
-  }
 }
