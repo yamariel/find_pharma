@@ -53,6 +53,9 @@ class PharmaciesPage extends ConsumerWidget {
                   pharmacy: pharmacy,
                   distanceKm: distanceTo(pharmacy),
                   onTap: () => context.push('/pharmacies/${pharmacy.id}'),
+                  onDirections: () =>
+                      context.push('/map?pharmacyId=${pharmacy.id}'),
+
                 );
               },
             ),

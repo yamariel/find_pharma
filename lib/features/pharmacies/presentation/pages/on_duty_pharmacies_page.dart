@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/geo/user_position.dart';
-import '../../../../core/utils/date_formatter.dart';
 import '../../domain/entities/pharmacy.dart';
 import '../providers/pharmacy_provider.dart';
 import '../widgets/pharmacy_card.dart';
@@ -59,26 +58,11 @@ class OnDutyPharmaciesPage extends ConsumerWidget {
                   itemCount: list.length,
                   itemBuilder: (BuildContext context, int index) {
                     final Pharmacy pharmacy = list[index];
-                    final DateTime? until = pharmacy.onDutyUntil;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        PharmacyCard(
-                          pharmacy: pharmacy,
-                          distanceKm: distanceTo(pharmacy),
-                          onTap: () =>
-                              context.push('/pharmacies/${pharmacy.id}'),
-                        ),
-                        if (until != null)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                            child: Text(
-                              'De garde jusqu\'au '
-                              '${DateFormatter.formatDateTime(until)}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                      ],
+                    return PharmacyCard(
+                      pharmacy: pharmacy,
+                      distanceKm: distanceTo(pharmacy),
+                      onTap: () => context.push('/pharmacies/${pharmacy.id}'),
+                      onDirections: () => context.push('/map?pharmacyId=${pharmacy.id}'),
                     );
                   },
                 ),
