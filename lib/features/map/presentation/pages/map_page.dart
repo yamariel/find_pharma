@@ -16,6 +16,8 @@ class MapPage extends ConsumerWidget {
     return PharmacyMapView(
       pharmacies: pharmacies.asData?.value ?? const [],
       selectedPharmacyId: selectedPharmacyId,
+      locationRepository: ref.watch(locationRepositoryProvider),
+      routingRepository: ref.watch(routingRepositoryProvider),
       loading: pharmacies.isLoading,
       errorMessage: pharmacies.hasError
           ? 'Impossible de charger les pharmacies. Réessayez.'

@@ -6,8 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/map_config.dart';
 import '../../../../core/errors/failures.dart';
-import '../../data/datasources/geolocator_location_data_source.dart';
-import '../../data/datasources/osrm_routing_data_source.dart';
 import '../../domain/entities/map_pharmacy.dart';
 import '../../domain/entities/road_route.dart';
 import '../../domain/repositories/location_repository.dart';
@@ -29,8 +27,8 @@ class PharmacyMapView extends StatefulWidget {
     this.errorMessage,
     this.isDemo = false,
     this.config = const MapConfig(),
-    this.locationService,
-    this.routingService,
+    required this.locationRepository,
+    required this.routingRepository,
     this.tileProvider,
   });
   final List<MapPharmacy> pharmacies;
@@ -45,8 +43,8 @@ class PharmacyMapView extends StatefulWidget {
   final String? errorMessage;
   final bool isDemo;
   final MapConfig config;
-  final LocationRepository? locationService;
-  final RoutingRepository? routingService;
+  final LocationRepository locationRepository;
+  final RoutingRepository routingRepository;
 
   /// Optional for tests/custom tile providers; FlutterMap owns its lifecycle.
   final TileProvider? tileProvider;
@@ -59,8 +57,7 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
   static const kinshasa = LatLng(-4.325, 15.322);
   final _camera = MapController();
   late PharmacyMapController _state;
-  late RoutingRepository _routingService;
-  bool _ownsRouting = false;
+  late RoutingRepository _routingRepository;
   bool _ready = false;
   bool _tileError = false;
   int _tileRevision = 0;
@@ -73,16 +70,11 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
   }
 
   void _createState() {
-    _ownsRouting = widget.routingService == null;
-    _routingService =
-        widget.routingService ??
-        OsrmRoutingDataSource(
-          baseUrl: widget.config.routingUrl,
-          userAgent: widget.config.userAgent,
-        );
+    _routingRepository =
+        widget.routingRepository;
     _state = PharmacyMapController(
-      locationService: widget.locationService ?? GeolocatorLocationDataSource(),
-      routingService: _routingService,
+      locationRepository: widget.locationRepository,
+      routingRepository: _routingRepository,
     );
     _state.setPharmacies(_visibleResults);
     _state.select(widget.selectedPharmacyId);
@@ -97,8 +89,8 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
   @override
   void didUpdateWidget(covariant PharmacyMapView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.routingService != widget.routingService ||
-        oldWidget.locationService != widget.locationService ||
+    if (oldWidget.routingRepository != widget.routingRepository ||
+        oldWidget.locationRepository != widget.locationRepository ||
         oldWidget.config.routingUrl != widget.config.routingUrl) {
       _disposeState();
       _lastFitted = null;
@@ -215,7 +207,7 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
   }
 
   Future<void> _settings() async {
-    final opened = await _state.locationService.openSettings(
+    final opened = await _state.locationRepository.openSettings(
       locationSettings:
           _state.locationFailure?.problem == LocationProblem.disabled,
     );
@@ -516,7 +508,6 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
   void _disposeState() {
     _state.removeListener(_changed);
     _state.dispose();
-    if (_ownsRouting) _routingService.dispose();
   }
 
   @override

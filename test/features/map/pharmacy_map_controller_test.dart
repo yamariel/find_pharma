@@ -56,8 +56,8 @@ void main() {
     location = FakeLocation();
     routing = FakeRouting();
     controller = PharmacyMapController(
-      locationService: location,
-      routingService: routing,
+      locationRepository: location,
+      routingRepository: routing,
     );
     controller.setPharmacies(pharmacies);
     controller.select('a');
@@ -141,8 +141,8 @@ void main() {
   });
   test('disposing with pending requests never notifies', () async {
     final separate = PharmacyMapController(
-      locationService: location,
-      routingService: routing,
+      locationRepository: location,
+      routingRepository: routing,
     );
     separate.setPharmacies(pharmacies);
     separate.select('a');

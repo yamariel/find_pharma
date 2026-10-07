@@ -11,11 +11,11 @@ import 'package:latlong2/latlong.dart';
 /// Screen-scoped state. No database writes, position history or subscriptions.
 class PharmacyMapController extends ChangeNotifier {
   PharmacyMapController({
-    required this.locationService,
-    required this.routingService,
+    required this.locationRepository,
+    required this.routingRepository,
   });
-  final LocationRepository locationService;
-  final RoutingRepository routingService;
+  final LocationRepository locationRepository;
+  final RoutingRepository routingRepository;
   List<MapPharmacy> _pharmacies = const [];
   List<MapPharmacy> get pharmacies => _pharmacies;
   MapPharmacy? selected;
@@ -72,7 +72,7 @@ class PharmacyMapController extends ChangeNotifier {
     locationFailure = null;
     notifyListeners();
     try {
-      final result = await locationService.locate();
+      final result = await locationRepository.locate();
       if (_disposed) return null;
       position = result;
       return result;
@@ -108,7 +108,7 @@ class PharmacyMapController extends ChangeNotifier {
       // Refresh for each explicit route request; never use a persisted position.
       final origin = await locate();
       if (_disposed || version != _routeVersion || origin == null) return;
-      final result = await routingService.route(origin, destination.point);
+      final result = await routingRepository.route(origin, destination.point);
       if (_disposed || version != _routeVersion) return;
       roadRoute = result;
     } on RoutingFailure catch (error) {
