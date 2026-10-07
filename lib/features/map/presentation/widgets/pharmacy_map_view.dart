@@ -54,7 +54,6 @@ class PharmacyMapView extends StatefulWidget {
 }
 
 class _PharmacyMapViewState extends State<PharmacyMapView> {
-  static const kinshasa = LatLng(-4.325, 15.322);
   final _camera = MapController();
   late PharmacyMapController _state;
   late RoutingRepository _routingRepository;
@@ -284,7 +283,7 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
                         _notice('Recherche : ${widget.medicine!.label}'),
                       if (_state.position == null)
                         _notice(
-                          'Sans position client • vue initiale sur Kinshasa',
+                          'Position non disponible • itinéraire indisponible',
                         ),
                       if (widget.loading)
                         const LinearProgressIndicator(
@@ -341,8 +340,11 @@ class _PharmacyMapViewState extends State<PharmacyMapView> {
                     FlutterMap(
                       mapController: _camera,
                       options: MapOptions(
-                        initialCenter: kinshasa,
-                        initialZoom: 12,
+                        initialCenter: LatLng(
+                          widget.config.fallbackLatitude,
+                          widget.config.fallbackLongitude,
+                        ),
+                        initialZoom: widget.config.fallbackZoom,
                         minZoom: 3,
                         maxZoom: 19,
                         onMapReady: () {

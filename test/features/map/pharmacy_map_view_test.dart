@@ -81,7 +81,7 @@ void main() {
       MapPharmacy? viewed;
       await show(tester, onView: (p) => viewed = p);
       expect(find.byType(FlutterMap), findsOneWidget);
-      expect(find.textContaining('Kinshasa'), findsOneWidget);
+      expect(find.textContaining('Position non disponible'), findsOneWidget);
       expect(location.calls, 0);
       await tester.tap(find.byTooltip('A, Ouverture inconnue'));
       await tester.pumpAndSettle();
