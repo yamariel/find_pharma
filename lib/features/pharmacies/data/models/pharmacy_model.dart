@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_pharma/core/errors/exceptions.dart';
+import 'package:find_pharma/features/pharmacies/data/models/opening_hours_mapper.dart';
+import 'package:find_pharma/features/pharmacies/domain/entities/opening_hours.dart';
 import 'package:find_pharma/features/pharmacies/domain/entities/pharmacy.dart';
 
 /// Noms des champs tels qu'ils existent dans Firestore.
@@ -15,6 +17,7 @@ abstract final class PharmacyFields {
   static const String email = 'email';
   static const String address = 'address';
   static const String secondaryPhone = 'secondaryPhone';
+  static const String openingHours = 'openingHours';
   static const String verifiedByPharmacy = 'verifiedByPharmacy';
   static const String updatedAt = 'updatedAt';
 }
@@ -35,6 +38,7 @@ class PharmacyModel extends Pharmacy {
     required super.email,
     super.address,
     super.secondaryPhone,
+    super.openingHours,
     super.verifiedByPharmacy,
     super.updatedAt,
   });
@@ -59,6 +63,9 @@ class PharmacyModel extends Pharmacy {
       email: _optionalString(data, PharmacyFields.email),
       address: _optionalString(data, PharmacyFields.address),
       secondaryPhone: _optionalString(data, PharmacyFields.secondaryPhone),
+      openingHours: OpeningHoursMapper.fromFirestore(
+        data[PharmacyFields.openingHours],
+      ),
       verifiedByPharmacy: _optionalBool(data, PharmacyFields.verifiedByPharmacy),
       updatedAt: _optionalDateTime(data, PharmacyFields.updatedAt),
     );
@@ -76,6 +83,7 @@ class PharmacyModel extends Pharmacy {
       email: pharmacy.email,
       address: pharmacy.address,
       secondaryPhone: pharmacy.secondaryPhone,
+      openingHours: pharmacy.openingHours,
       verifiedByPharmacy: pharmacy.verifiedByPharmacy,
       updatedAt: pharmacy.updatedAt,
     );
@@ -89,6 +97,7 @@ class PharmacyModel extends Pharmacy {
   /// téléphone. Deux appareils mal réglés produiraient sinon des dates
   /// incohérentes, et tout l'indicateur de fraîcheur deviendrait faux.
   Map<String, dynamic> toFirestore() {
+    final OpeningHours? hours = openingHours;
     return <String, dynamic>{
       PharmacyFields.name: name,
       PharmacyFields.district: district,
@@ -97,6 +106,8 @@ class PharmacyModel extends Pharmacy {
       PharmacyFields.email: email,
       PharmacyFields.address: address,
       PharmacyFields.secondaryPhone: secondaryPhone,
+      if (hours != null)
+        PharmacyFields.openingHours: OpeningHoursMapper.toFirestore(hours),
       PharmacyFields.verifiedByPharmacy: verifiedByPharmacy,
       PharmacyFields.updatedAt: FieldValue.serverTimestamp(),
     };
