@@ -17,8 +17,6 @@ class AiRemoteDataSourceImpl implements AiRemoteDataSource {
   Future<AiResponseModel> askAi(String prompt) async {
     final apiKey = dotenv.env["RODIUMAI_API_KEY"] ?? '';
 
-    // Clé absente du .env : inutile d'appeler l'API pour récupérer un 401
-    // dont le message s'adresse aux développeurs.
     if (apiKey.isEmpty) {
       throw const ServerException(
         "L'assistant n'est pas disponible : cette installation n'a pas de clé API configurée.",
@@ -46,7 +44,7 @@ Sécurité :
       final response = await dio.post(
         "https://api.rodiumai.io/v1/messages",
         data: {
-          "model": "anthropic/claude-sonnet-4-6",
+          "model": "anthropic/claude-opus-5-5",
           "messages": [
             {"role": "user", "content": prompt},
           ],
