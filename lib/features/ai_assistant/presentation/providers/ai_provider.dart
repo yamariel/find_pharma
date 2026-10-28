@@ -9,6 +9,8 @@ import '../../../pharmacies/domain/entities/pharmacy.dart';
 import '../../../pharmacies/domain/repositories/pharmacy_repository.dart';
 import '../../../pharmacies/presentation/providers/pharmacy_provider.dart';
 import '../../data/datasources/ai_remote_data_source.dart';
+import '../../domain/entities/ai_conversation_message.dart';
+import '../../data/datasources/ai_remote_data_source_impl.dart';
 import '../../data/repositories/ai_repository_impl.dart';
 import '../../domain/usecases/ask_health_assistant_usecase.dart';
 
@@ -78,13 +80,16 @@ class AiChatState {
     bool? isLoadingHistory,
     List<Pharmacy>? pharmacies,
     String? errorMessage,
+    bool clearErrorMessage = false,
   }) {
     return AiChatState(
       messages: messages ?? this.messages,
       isLoading: isLoading ?? this.isLoading,
       isLoadingHistory: isLoadingHistory ?? this.isLoadingHistory,
       pharmacies: pharmacies ?? this.pharmacies,
-      errorMessage: errorMessage,
+      errorMessage: clearErrorMessage
+          ? null
+          : errorMessage ?? this.errorMessage,
     );
   }
 }
@@ -92,6 +97,7 @@ class AiChatState {
 class AiChatNotifier extends StateNotifier<AiChatState> {
   final AskHealthAssistantUsecase useCase;
   final PharmacyRepository pharmacyRepository;
+  late final Future<void> _historyLoadFuture;
 
   String? get userId => FirebaseAuth.instance.currentUser?.uid;
 
@@ -108,7 +114,7 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
           isLoading: false,
         ),
       ) {
-    loadUserHistory();
+    _historyLoadFuture = loadUserHistory();
   }
 
   //charger l'historique Firestore
@@ -116,7 +122,7 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
     final currentUserId = userId;
     if (currentUserId == null) return;
     try {
-      state = state.copyWith(isLoadingHistory: true, errorMessage: null);
+      state = state.copyWith(isLoadingHistory: true, clearErrorMessage: true);
       final snapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserId)
@@ -208,9 +214,10 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
 
   //envoyer un message
   Future<void> sendMessage(String prompt) async {
-    if (prompt.trim().isEmpty) return;
+    if (prompt.trim().isEmpty || state.isLoading) return;
 
-    state = state.copyWith(errorMessage: null);
+    await _historyLoadFuture;
+    state = state.copyWith(clearErrorMessage: true);
 
     final userMessage = ChatMessage(
       text: prompt,
@@ -222,6 +229,15 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
       messages: [...state.messages, userMessage],
       isLoading: true,
     );
+
+    final conversation = state.messages
+        .take(state.messages.length - 1)
+        .skipWhile((message) => !message.isUser)
+        .map(
+          (message) =>
+              AiConversationMessage(text: message.text, isUser: message.isUser),
+        )
+        .toList();
 
     await _saveMessageToFirestore(userMessage);
     final userMessageSaveError = state.errorMessage;
@@ -253,7 +269,17 @@ Question exacte de l'utilisateur :
 $prompt
 """;
 
-      final suggestion = await useCase(enrichedPrompt);
+      conversation.add(
+        AiConversationMessage(text: enrichedPrompt, isUser: true),
+      );
+      final recentConversation = conversation.length > 20
+          ? conversation.sublist(conversation.length - 20)
+          : conversation;
+      final validConversation = recentConversation
+          .skipWhile((message) => !message.isUser)
+          .toList();
+
+      final suggestion = await useCase(validConversation);
 
       final aiMessage = ChatMessage(
         text: suggestion.responseText,
