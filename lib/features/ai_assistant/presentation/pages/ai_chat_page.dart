@@ -6,7 +6,6 @@ import '../widgets/chat_bubble.dart';
 import '../widgets/pharmacie_card.dart';
 
 class AiChatPage extends ConsumerStatefulWidget {
-
   const AiChatPage({super.key});
 
   @override
@@ -99,7 +98,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Find Pharma AI")),
+      appBar: AppBar(title: const Text("FindPharma AI")),
       body: SafeArea(
         child: Column(
           children: [
@@ -152,25 +151,27 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                         ),
 
                         if (!message.isUser)
-                          ...aiChat.pharmacies.where(
-                            (pharmacy) => message.text.toLowerCase().contains(
-                              pharmacy.name.toLowerCase(),
-                            ),
-                          ).map(
-                            (pharmacy) => Padding(
-                              padding: const EdgeInsets.only(
-                                top: 8.0,
-                                left: 8.0,
-                                right: 8.0,
+                          ...aiChat.pharmacies
+                              .where(
+                                (pharmacy) => message.text
+                                    .toLowerCase()
+                                    .contains(pharmacy.name.toLowerCase()),
+                              )
+                              .map(
+                                (pharmacy) => Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8.0,
+                                    left: 8.0,
+                                    right: 8.0,
+                                  ),
+                                  child: PharmacyCardWidget(
+                                    pharmacyId: pharmacy.id,
+                                    name: pharmacy.name,
+                                    district: pharmacy.district,
+                                    phone: pharmacy.phone,
+                                  ),
+                                ),
                               ),
-                              child: PharmacyCardWidget(
-                                pharmacyId: pharmacy.id,
-                                name: pharmacy.name,
-                                district: pharmacy.district,
-                                phone: pharmacy.phone,
-                              ),
-                            ),
-                          ),
                       ],
                     ),
                   );
