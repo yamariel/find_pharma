@@ -33,6 +33,7 @@ dependencies:
   rename_app: ^1.6.6
   responsive_framework: ^1.5.1
   shared_preferences: ^2.5.5
+  file_picker: ^13.3.0
 dev_dependencies:
   integration_test:
     sdk: flutter
