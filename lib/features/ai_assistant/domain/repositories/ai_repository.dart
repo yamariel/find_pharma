@@ -1,5 +1,6 @@
+import '../entities/ai_conversation_message.dart';
 import '../entities/ai_suggestion.dart';
 
 abstract class AiRepository {
-  Future<AiSuggestion> askAssistant(String prompt);
+  Future<AiSuggestion> askAssistant(List<AiConversationMessage> messages);
 }
