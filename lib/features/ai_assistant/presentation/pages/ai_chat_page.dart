@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/ai_provider.dart';
 import '../widgets/chat_bubble.dart';
+import '../widgets/chat_typing_indicator.dart';
 import '../widgets/pharmacie_card.dart';
 
 class AiChatPage extends ConsumerStatefulWidget {
@@ -129,11 +130,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                 itemCount: aiChat.messages.length + (aiChat.isLoading ? 1 : 0),
                 itemBuilder: (context, i) {
                   if (i == aiChat.messages.length) {
-                    return ChatBubble(
-                      isUser: false,
-                      text: "Find Pharma AI est en train de réfléchir...",
-                      time: DateTime.now(),
-                    );
+                    return const ChatTypingIndicator();
                   }
                   final message = aiChat.messages[i];
                   return Padding(
