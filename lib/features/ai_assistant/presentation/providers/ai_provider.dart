@@ -106,7 +106,7 @@ class AiChatNotifier extends StateNotifier<AiChatState> {
         AiChatState(
           messages: [
             ChatMessage(
-              text: "Bonjour ! Je suis l'assistant Find Pharma AI. Je peux vous aider à trouver une pharmacie de garde ouverte, vérifier les alternatives génériques d'un médicament ou vous orienter vers la structure de santé la plus proche. Comment puis-je vous aider aujourd'hui ?",
+              text: "Bonjour ! Je suis l'assistant **FindPharma AI**. Je peux vous aider à trouver une pharmacie de garde ouverte, vérifier les alternatives génériques d'un médicament ou vous orienter vers la structure de santé la plus proche. **Comment puis-je vous aider aujourd'hui ?**",
               isUser: false,
               timestamp: DateTime.now(),
             ),
