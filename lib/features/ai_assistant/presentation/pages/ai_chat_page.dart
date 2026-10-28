@@ -1,3 +1,7 @@
+import 'package:file_picker/file_picker.dart';
+
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +20,8 @@ class AiChatPage extends ConsumerStatefulWidget {
 class _AiChatPageState extends ConsumerState<AiChatPage> {
   final TextEditingController _promptController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  PlatformFile? _selectedImage;
+  Uint8List? _selectedImageBytes;
 
   @override
   void dispose() {
@@ -42,44 +48,27 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
     }
   }
 
-  // Future<void> _showDialog(int messageIndex) async {
-  //   return showDialog<void>(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Voulez-vous supprimer ce message?'),
-  //         content: const SingleChildScrollView(
-  //           child: ListBody(
-  //             children: <Widget>[
-  //               Text(
-  //                 'Cette action est irréversible et le message disparaîtra de la liste de discussion.',
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('Annuler'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: const Text(
-  //               'Supprimer',
-  //               style: TextStyle(color: Colors.red),
-  //             ),
-  //             onPressed: () {
-  //               ref.read(aiChatProvider.notifier).deleteMessage(messageIndex);
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  Future<void> _pickFile() async {
+    List<PlatformFile> files = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'webp'],
+    );
+    if (files.isEmpty) return;
+    final file = files.first;
+    try {
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _selectedImage = file;
+        _selectedImageBytes = bytes;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Impossible de lire ce type de fichier.")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +128,6 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ChatBubble(
-                          // onLongPress: message.isUser == true
-                          //     ? () => _showDialog(i)
-                          //     : null,
                           isUser: message.isUser,
                           text: message.text,
                           time: message.timestamp,
@@ -175,10 +161,41 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                 },
               ),
             ),
+            if (_selectedImage != null && _selectedImageBytes != null)
+              Row(
+                children: [
+                  Image.memory(
+                    _selectedImageBytes!,
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _selectedImage!.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: "Retirer l'image",
+                    onPressed: () {
+                      setState(() {
+                        _selectedImage = null;
+                        _selectedImageBytes = null;
+                      });
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
             Container(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  InkWell(onTap: _pickFile, child: Icon(Icons.attach_file)),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
                       minLines: 1,
