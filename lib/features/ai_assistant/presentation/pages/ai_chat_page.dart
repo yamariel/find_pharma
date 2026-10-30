@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/ai_provider.dart';
+import '../widgets/area_select_file.dart';
 import '../widgets/chat_bubble.dart';
 import '../widgets/chat_typing_indicator.dart';
 import '../widgets/pharmacie_card.dart';
+import '../widgets/warning_zone.dart';
 
 class AiChatPage extends ConsumerStatefulWidget {
   const AiChatPage({super.key});
@@ -20,8 +22,8 @@ class AiChatPage extends ConsumerStatefulWidget {
 class _AiChatPageState extends ConsumerState<AiChatPage> {
   final TextEditingController _promptController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  PlatformFile? _selectedImage;
-  Uint8List? _selectedImageBytes;
+  List<PlatformFile> _selectedFiles = [];
+  List<Uint8List?> _selectedFileBytes = [];
 
   @override
   void dispose() {
@@ -49,23 +51,38 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
   }
 
   Future<void> _pickFile() async {
-    List<PlatformFile> files = await FilePicker.pickFiles(
+    final files = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'jpeg', 'webp'],
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'webp', 'docx', 'pdf', 'doc'],
     );
+
     if (files.isEmpty) return;
-    final file = files.first;
+
+    const imageExtensions = {'jpg', 'jpeg', 'png', 'webp'};
+
     try {
-      final bytes = await file.readAsBytes();
+      final bytesByFile = await Future.wait(
+        files.map((file) async {
+          final extension = file.extension?.toLowerCase();
+
+          if (!imageExtensions.contains(extension)) {
+            return null;
+          }
+          return file.readAsBytes();
+        }),
+      );
+
       if (!mounted) return;
+
       setState(() {
-        _selectedImage = file;
-        _selectedImageBytes = bytes;
+        _selectedFiles = [..._selectedFiles, ...files];
+        _selectedFileBytes = [..._selectedFileBytes, ...bytesByFile];
       });
     } catch (e) {
       if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Impossible de lire ce type de fichier.")),
+        SnackBar(content: Text("Impossible de lire ce type de fichier")),
       );
     }
   }
@@ -98,19 +115,7 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: ListTile(
-                  leading: Icon(Icons.privacy_tip, color: colorScheme.error),
-                  title: const Text("Avertissement déontologique"),
-                  titleTextStyle: TextStyle(color: colorScheme.error),
-                  subtitle: const Text(
-                    "Cet assistant fournit des informations générales et vous oriente vers les officines disponibles. "
-                    "Il ne pose aucun diagnostic médical ni ne remplace une consultation d'urgence.",
-                    textAlign: TextAlign.justify,
-                  ),
-                ),
-              ),
+              child: WarningZone(),
             ),
             const SizedBox(height: 10),
             Expanded(
@@ -161,34 +166,22 @@ class _AiChatPageState extends ConsumerState<AiChatPage> {
                 },
               ),
             ),
-            if (_selectedImage != null && _selectedImageBytes != null)
-              Row(
-                children: [
-                  Image.memory(
-                    _selectedImageBytes!,
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _selectedImage!.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: "Retirer l'image",
-                    onPressed: () {
-                      setState(() {
-                        _selectedImage = null;
-                        _selectedImageBytes = null;
-                      });
-                    },
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
+            if (_selectedFiles.isNotEmpty)
+              AreaSelectFile(
+                selectedFiles: _selectedFiles,
+                selectedFileBytes: _selectedFileBytes,
+                onRemoveFile: (index) {
+                  setState(() {
+                    _selectedFiles.removeAt(index);
+                    _selectedFileBytes.removeAt(index);
+                  });
+                },
+                onRemoveAll: () {
+                  setState(() {
+                    _selectedFiles.clear();
+                    _selectedFileBytes.clear();
+                  });
+                },
               ),
             Container(
               padding: const EdgeInsets.all(8.0),
